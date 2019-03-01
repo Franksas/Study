@@ -1,0 +1,260 @@
+/*1.声明一个游标
+2.打开游标
+3.抓取数据
+4.关闭游标*/
+--使用游标在控制台输出所有员工的姓名和部门号
+DECLARE
+CURSOR emp_cursor IS SELECT * FROM emp;
+v_emp emp%rowtype;
+BEGIN
+  OPEN emp_cursor;
+  LOOP
+    FETCH emp_cursor INTO v_emp;
+    EXIT WHEN emp_cursor%NOTFOUND;
+    dbms_output.put_line(v_emp.ename||','||v_emp.deptno);
+  END LOOP;
+  CLOSE emp_cursor;
+  END;
+  --使用游标显示部门表里所有部门信息
+  DECLARE
+CURSOR dept_cursor IS SELECT * FROM dept;
+v_dept dept_cursor%rowtype;
+BEGIN
+  OPEN dept_cursor;
+  LOOP
+    FETCH dept_cursor INTO v_dept;
+    EXIT WHEN dept_cursor%NOTFOUND;
+    dbms_output.put_line(v_dept.deptno||CHR(10)||v_dept.dname||CHR(10)||v_dept.loc);
+  END LOOP;
+  CLOSE dept_cursor;
+  END;
+  SELECT * FROM dept;
+  --第二种写法
+ DECLARE
+CURSOR emp_cursor IS SELECT empno,ename,deptno FROM emp;
+v_emp emp_cursor%rowtype;
+BEGIN
+  OPEN emp_cursor;
+    FETCH emp_cursor INTO v_emp;
+    WHILE emp_cursor%FOUND LOOP
+    dbms_output.put_line(v_emp.ename||','||v_emp.deptno);
+    FETCH emp_cursor INTO v_emp;
+  END LOOP;
+  CLOSE emp_cursor;
+END;
+--
+DECLARE
+  CURSOR dept_cursor IS
+    SELECT * FROM dept;
+  v_dept dept_cursor%rowtype;
+BEGIN
+  OPEN dept_cursor;
+  FETCH dept_cursor
+    INTO v_dept;
+  WHILE dept_cursor%FOUND LOOP
+    dbms_output.put_line(v_dept.deptno || CHR(10) || v_dept.dname ||
+                         CHR(10) || v_dept.loc);
+  FETCH dept_cursor INTO v_dept;
+  END LOOP;
+  CLOSE dept_cursor;
+END;
+  SELECT * FROM dept;
+--第三种写法
+DECLARE
+  CURSOR dept_cursor IS
+    SELECT * FROM dept;
+  v_dept dept_cursor%rowtype;
+BEGIN
+  FOR v_dept IN dept_cursor LOOP
+
+    dbms_output.put_line(v_dept.deptno || CHR(10) || v_dept.dname ||
+                         CHR(10) || v_dept.loc);
+  END LOOP;
+END;
+
+ --OPEN emp_cursor;
+ DECLARE
+CURSOR emp_cursor IS SELECT * FROM emp;
+v_emp emp%rowtype;
+BEGIN
+ --OPEN emp_cursor;
+   IF emp_cursor%ISOPEN THEN
+  LOOP
+    FETCH emp_cursor INTO v_emp;
+    EXIT WHEN emp_cursor%NOTFOUND;
+    dbms_output.put_line(v_emp.ename||','||v_emp.deptno||' '||emp_cursor%rowcount);
+END LOOP;
+ELSE
+      dbms_output.put_line('请打开游标');
+      END IF;
+ --CLOSE emp_cursor;
+
+  END;
+ --显示10号部门的员工的姓名和薪水
+ DECLARE
+CURSOR emp_cursor(v_deptno emp.deptno%type) IS SELECT ename,sal FROM emp WHERE deptno=v_deptno;
+v_emp emp_cursor%rowtype;
+BEGIN
+  OPEN emp_cursor(10);
+
+  LOOP
+    FETCH emp_cursor INTO v_emp;
+    EXIT WHEN emp_cursor%NOTFOUND;
+    dbms_output.put_line(v_emp.ename||','||v_emp.sal);
+END LOOP;
+CLOSE emp_cursor;
+  END;
+   DECLARE
+CURSOR emp_cursor(v_deptno emp.deptno%type) IS SELECT ename,sal FROM emp WHERE deptno=v_deptno;
+v_emp emp_cursor%rowtype;
+BEGIN
+ FOR v_emp IN emp_cursor(10) LOOP
+    dbms_output.put_line(v_emp.ename||','||v_emp.sal);
+END LOOP;
+  END;
+ -- 使用游标编写一个PL/SQL程序，要求根据课程编号在控制台显示哪些学生选修了该课程。
+ DECLARE
+CURSOR cur_studnet(cno NUMBER) IS SELECT s.sname name1,sc.cno cno1 FROM t_student s,t_scgrade  sc WHERE sc.cno=cno AND sc.sno=s.sno;
+row_studnet cur_studnet%rowtype;
+BEGIN
+  OPEN cur_studnet(10);
+
+  LOOP
+    FETCH cur_studnet INTO row_studnet;
+    EXIT WHEN cur_studnet%NOTFOUND;
+    dbms_output.put_line(row_studnet.name1||'选修了'||row_studnet.cno);
+END LOOP;
+CLOSE cur_studnet;
+  END;
+  SELECT * FROM t_course;
+--任务：从之前创建好的学生表t_student和选修成绩表t_scgrade中使用游标取出学生的学生姓名，课程编号和成绩的信息，显示在控制台。
+--（使用FOR语句循环游标）
+    DECLARE
+CURSOR cur_studnet IS SELECT s.sname,sc.cnosc.grade, FROM t_student t,t_scgrade sc WHERE t.sno=sc.sno;
+v_student cur_studnet%rowtype;
+BEGIN
+ FOR v_studnet IN cur_studnet LOOP
+    dbms_output.put_line(v_studnet.sname||'的'||v_studnet.cno||'成绩是'||v_studnet.grade);
+END LOOP;
+  END;
+
+  --异常
+  --以下代码中，出现了除数不能为零的异常
+
+  DECLARE
+   BEGIN
+  dbms_output.put_line('异常前');
+  dbms_output.put_line(10/0);
+  dbms_output.put_line('异常后');
+  EXCEPTION
+    WHEN ZERO_DIVIDE THEN
+      dbms_output.put_line('除数为0');
+      WHEN OTHERS THEN
+        dbms_output.put_line('........');
+
+      END;
+      --
+  DECLARE
+  e_del_dept EXCEPTION;
+  PRAGMA EXCEPTION_INIT(e_del_dept,-2292);
+  v_sum NUMBER(5):=0;
+        BEGIN
+    DELETE FROM dept;
+    EXCEPTION
+      WHEN e_del_dept THEN
+        dbms_output.put_line(sqlcode||','||sqlerrm);
+        dbms_output.put_line('部门下存在员工');
+        END;
+--编写一个PL/SQL程序，计算1+2+3+。。。+50的值。
+--在求和的过程中，如果发现结果超出了100，则抛出异常，并停止求和
+  DECLARE
+    e_outofrange EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_outofrange, -20000);
+    v_sum NUMBER(5) := 0;
+  BEGIN
+    FOR v_num IN 1 .. 50 LOOP
+      v_sum := v_sum + v_num;
+      IF v_sum > 100 THEN
+        -- RAISE_APPLICATION_ERROR(-2000,'结果太大了'）;
+        RAISE e_outofrange;
+      END IF;
+    END LOOP;
+  EXCEPTION
+    WHEN e_outofrange THEN
+      dbms_output.put_line(sqlcode || ',' || sqlerrm);
+  END;
+--如果用户不是sys用户，不允许删除新建用户myuser1
+SELECT * FROM user_users;
+ DECLARE
+    e_username VARCHAR2(15);
+    out_of_user_permission EXCEPTION;
+    PRAGMA EXCEPTION_INIT(out_of_user_permission, 20001);
+  BEGIN
+     SELECT username INTO v_username FROM user_users ;
+     IF v_username!='sys' THEN
+        RAISE out_of_user_permission;
+        ELSE
+           EXECUTE IMMEDIATE 'DEROP U8SER myuser1 CASCADE:'
+      END IF;
+  EXCEPTION
+    WHEN out_of_user_permission THEN
+      dbms_output.put_line( '你的权限不足，请联系管理员' );
+  END;
+--
+BEGIN
+dbms_output.put_line(user);
+END;
+--语句触发器
+--为公司的员工表t_emp建一个触发器，员工不得在非上班时间修改表里的数据。
+CREATE OR REPLACE TRIGGER t_emp_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON t_emp
+BEGIN
+  IF
+ (to_number(to_char(sysdate,'hh24'))<9 OR to_number(to_char(sysdate,'hh24'))>18)OR
+ to_char(sysdate,'day')IN ('星期六，星期天') THEN
+ RAISE_APPLICATION_ERROR(-20003,'非上班时间不得操作');
+ END IF;
+END;
+INSERT INTO t_emp(empno,ename,deptno) VALUES(9001,'aaa',30);
+SELECT * FROM t_emp;
+
+--行触发器
+--针对备份表emp1创建一个触发器
+CREATE OR REPLACE TRIGGER t_emprow_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON t_emp
+FOR EACH ROW
+  BEGIN
+    dbms_output.put_line('测试');
+    END;
+DELETE FROM t_emp WHERE empno=9001;
+INSERT INTO t_emp(empno,ename,deptno) VALUES(9001,'aaa',30);
+SELECT * FROM t_emp;
+CREATE OR REPLACE TRIGGER t_emprow_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON t_emp
+FOR EACH ROW
+  BEGIN
+    :new.ename:='zs';
+    dbms_output.put_line(:old.ename||','||:new.ename);
+    END;
+SELECT * FROM t_emp;
+UPDATE t_emp SET ename='张三' WHERE empno=9002;
+
+--为主键自动赋值
+CREATE TABLE  t_test1(
+       id number(10) PRIMARY KEY,
+       name VARCHAR2(20)
+       )
+--创建一个序列
+CREATE SEQUENCE t_test1_seq;
+--创建一个触发器
+CREATE OR REPLACE TRIGGER t_test1_trigger
+BEFORE INSERT ON t_test1
+FOR EACH ROW
+BEGIN
+  IF :new.id IS NULL THEN
+    :new.id:=t_test1_seq.nextval;
+    END IF;
+  END;
+INSERT INTO t_test1(name) values('aaa');
+COMMIT;
+SELECT * FROM t_test1;

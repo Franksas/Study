@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        //array 一个数组
+        //fn 一个函数
+        var each=function(array,fn){
+            //计划对array数组中的元素进行处理，但是处理的方式，each函数并不知道，而由传入的参数fn决定
+            for(var i=0;i<array.length;i++){
+               fn.call(null,i, array);//传入调用者 和入参
+            }
+        }
+        function fn(index,obj){
+            alert("数组的第" + index+ "个元素是：" +obj);
+        }
+        each([1,2,3,4,5],fn); //函数作为一个入参传入
+    </script>,
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表格</title>
+    <link href="layui/css/layui.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="layui/layui.js"></script>
+</head>
+<body>
+<table id="testTable" lay-filter="demoTable"></table>
+  <!-- 表格的工具栏-->
+    <script type="text/html" id="tooBfar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" layui-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" layui-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs"layui-event="remove">删除</a>
+
+    </script>
+<script type="text/javascript">
+    layui.use(['table','layer'],function(){
+       var table = layui.table;
+        var layer = layui.layer;
+
+    table.render({
+            elem:'#testTable',
+            height:332,
+            url:'table.data',
+            page:true,
+            cols:[[//表头
+                {field: 'id', title: 'ID',sort: true, fixed: 'left',width:80 }
+                ,{field: 'username', title: '用户名',sort: true, fixed: 'left', width:100}
+                ,{field: 'sex', title: '性别', width:80, sort: true}
+                ,{field: 'city', title: '城市', width:80}
+                ,{field: 'sign', title: '签名', width: 170}
+                ,{field: 'experience', title: '积分', width: 80, sort: true}
+                ,{field: 'score', title: '评分', width: 80, sort: true}
+                ,{field: 'classify', title: '职业', width: 80}
+                ,{field: 'wealth', title: '财富', width: 135, sort: true}
+                ,{fixed: 'right', title: '操作',width: 165, align:'center', toolbar: '#tooBfar'}
+
+            ]]
+        });
+    table.on('tool(demoTable)',function(obj){//注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+      var data = obj.data,//行数据
+              layEvent = obj.event;
+        var id= row.id;
+        var username = row.username;
+        if(layEvent == "detail"){
+            layer.msg("查看编号为" + id + "的详细信息");
+
+        }else if(layEvent =="edit"){
+            layer.msg("修改编号为：" + id+"的记录");
+        }else {
+            layer.confirm("您确定要删除编号为：" + id + "的记录吗？",
+            function(index){
+                obj.del();//删除本行
+                layer.close(index);//关闭打开的层，即此询问框
+            });
+        }
+    });
+    });
+</script>
+</body>
+</html>

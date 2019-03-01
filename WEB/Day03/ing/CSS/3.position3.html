@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        *{padding: 0px;margin: 0px}
+
+        div{
+            width: 300px;
+            height: 300px;
+        }
+        #div1{
+            /*background-color: red;*/
+            border: 1px solid red;
+            position: absolute;
+            /*绝对定位，特点是元素移动了以后，原来位置上的空间就会被释放，其他元素就会重新占用该空间这个是和相对定位的区别*/
+            top: 0px;/*无论移动多少像素，div1的位置就会被释放，div2就会占用*/
+            left: 0px;
+        }
+        #div2{
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+<div id="div1"></div>
+<div id="div2"></div>
+
+</body>
+</html>

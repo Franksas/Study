@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        table{
+            width:300px;
+            border-collapse: collapse;
+        }
+        td{
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="button" onclick="add()" value="添加行">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="button" onclick="remove()" value="删除行">
+  <table>
+      <tr onclick="showInfo(this)">
+          <td>1</td>
+          <td>李白</td>
+          <td>男</td>
+      </tr>
+      <tr onclick="showInfo(this)">
+          <td>2</td>
+          <td>李治</td>
+          <td>女</td>
+      </tr>
+      <tr onclick="showInfo(this)">
+          <td>3</td>
+          <td>杜甫</td>
+          <td>男</td>
+      </tr>
+  </table>
+<script type="text/javascript">
+    function showInfo(ele){
+        var Index = ele.rowIndex;
+        //alert(index);
+        ele.style.backgroundColor="blue";
+        var table = ele.parentElement.parentElement;
+        var rows = table.rows;
+        for(var i=0;i<rows.length;i++){
+            rows[i].style.backgroundColor="white";
+        }
+        ele.style.backgroundColor ="orange";//让当前行背景色改为orange
+    }
+    function add(){
+        var table = $("table")[0];
+        var tr = table.insertRow();
+        //给新增的元素动态绑定事件，参数1；事件名称，参数2，事件对应的方法
+        tr.addEventListener("click",function(){
+            //此时this代表了事件源对象，即tr
+            //alert(this);
+            showInfo(this);//这个可以
+            //showInfo(tr);//这个也可以
+        });
+        for(var i=0;i<3;i++){
+            var td= tr.insertCell(i);
+            td.innerHTML="["+(tr.rowIndex+1)+"]行[" + i + "]列";
+        }
+    }
+    // 如果有选中的行，就删除此行
+    function remove(){
+        var table = $("table")[0];
+        var rows = table.rows;
+        for(var i=0;i<rows.length;i++){
+            //因为之前被选中的行背景色是orange可以根据此判断是哪行，再根据索引进行删除
+            if(rows[i].style.backgroundColor=="orange"){
+              table.deleteRow(i);
+                break;//删除后不再循环，中断
+            }
+        }
+    }
+    function $(eleInfo){
+        var type = eleInfo.substr(0,1);//获取第一个字符
+        if("#"==type){
+            return document.getElementById(eleInfo.substr(1));
+        }else if("." == type){
+            return document.getElementsByClassName(eleInfo.substr(1));
+        }else{
+            return document.getElementsByTagName(eleInfo);
+        }
+
+    }
+</script>
+</body>
+</html>

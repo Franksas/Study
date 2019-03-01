@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>学生管理</title>
+    <link rel="stylesheet" href="layui/css/layui.css"
+          type="text/css">
+    <script type="text/javascript" src="layui/layui.js"></script>
+</head>
+<body>
+<button class="layui-btn" id="btnAdd">增加</button>
+<!-- 增加学生信息，默认不显示，点增加按钮显示-->
+<fieldset id="fsAdd" class="layui-elem-field" style="display: none">
+    <legend>增加学生信息</legend>
+    <div>
+        <form class="layui-form">
+            编号:<input type="text" id="id" placeholder="学生编号:20180919001">
+            姓名:<input type="text" id="name" placeholder="姓名">
+            性别:<input type="radio" name="sex" value="0" title="男" checked>
+            <input type="radio" name="sex" value="1" title="女">
+            <button class="layui-btn" id="btnAddSave"
+                    type="button">保存</button>
+        </form>
+
+    </div>
+</fieldset>
+
+<table class="layui-hide" id="demo" lay-filter="test"></table>
+
+<script type="text/html" id="demoBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs"
+       lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs"
+       lay-event="remove">删除</a>
+</script>
+
+<script type="text/javascript">
+    var layui = layui.use(['jquery','element','form','table','layer'],function () {
+        var element = layui.element;
+        var form = layui.form;
+        var $ = layui.jquery;// 引入jquery模块
+        var table = layui.table;
+        var layer = layui.layer;
+
+        $("#btnAdd").click(function () {
+            //$("#fsAdd")[0].style.display="block";
+            $("#fsAdd").css("display", "block");
+        });
+        $("#btnAddSave").click(function () {
+            var id = $("#id");
+            var name = $("#name");
+            var sex = $("input:checked");
+            //alert(id.val()+"-" +name.val()+"-"+sex.val());
+            $.post("StudentManagerServlet", {
+                method: "addSave", id: id.val(),
+                name: name.val(), sex: sex.val()
+            }, function (data) {
+                alert(data);
+                // 刷新表格，表格对象.reload({ page:{curr:1}});
+                // 表格对象用的是table.render返回的对象，不是$("#tableid")对象
+                mytab.reload({
+                    page:{curr:1}
+                });
+                $("#id").val("");
+                $("#name").val("");
+                $("input[type='radio']")[0].checked="checked";
+                //alert($("input[type='radio']")[0].value);
+                form.render();
+            });
+        });
+        var mytab = table.render({
+            elem: "#demo",
+            height: 480,
+            url: "StudentManagerServlet?method=queryStudentList",
+            title: "学生信息",
+            page: true,
+            cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field: "id", title: "编号", fixed: "left", sort: true},
+                {field: "name", title: "姓名"},
+                {field: "sex", title: "性别"},
+                {fixed: "right", align: "center", toolbar: "#demoBar"}
+            ]]
+        });
+        table.on("tool(test)",function(obj){
+            var data = obj.data;
+            var event = obj.event;
+            // 根据触发的事件做不同的操作
+            if(event == "detail"){
+                //layer.msg("详情");
+                var id = data.id;// 获取编号
+                // 向后台请求编号为id的值的学生的详细信息
+                window.location.href="StudentManagerServlet?method=detailStudent&id=" +id;
+
+            }else if(event == "edit"){
+                layer.msg("修改");
+            }else{
+                layer.msg("删除");
+            }
+        });
+    })
+</script>
+</body>
+</html>

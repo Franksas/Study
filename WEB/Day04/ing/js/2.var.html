@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        var pubObj;//在所有的函数外部定义一个变量
+        function fn(){
+            /*定义一个函数*/
+            //var obj=1;  此行定义了一个只在函数内部起作用的局部变量
+            obj = 1;//此处定义了一个全局的
+            console.log("方法内部obj:" + obj);
+        }
+       //调用函数
+        fn();
+
+        console.log("函数外部obj：" + obj)
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title>元素样式</title>
+    <!-- link用来引入样式文件，href用来指定文件位置
+    rel指定引入的文件和当前页面的关系，即引入文件是用来控制页面元素的样式，type指定了文件内容格式-->
+    <link href="css0.css" rel="stylesheet" type="text/css">
+
+    <!-- 内联，使用于小型的项目，对于样式要求不是太复杂的，此处的样式只在本页面有效-->
+    <style type="text/css">
+        div{
+            /*背景色：可以使用内置的css的可以识别的颜色单词，也可以使用颜色代码*/
+            /*background-color: aqua;*/
+            background-color: blue;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 通过元素的style属性来指定元素的样式，这个优先级最高，此样式只针对该元素，对于页面中的其他同类型元素不起作用，样式的复用性不强-->
+    <!-- 控制div 的位置通过相对定位，并且指定了元素距上边100px,左100px-->
+    <div style="position:relative;top:100px;left:100px;"></div>
+    <!-- 该元素的样式会覆盖内联和外链的样式，这也是层叠的一效果，优先高的会覆盖优先级低的-->
+    <div style="background-color: green"></div>
+</body>
+</html>

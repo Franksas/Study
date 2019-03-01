@@ -1,0 +1,316 @@
+--输出HELLO WORLD
+BEGIN
+  dbms_output.put_line('HELLO WORLD');
+END;
+-- 输出‘你好！我是。。。’
+BEGIN
+  dbms_output.put_line('你好，我是小明');
+  dbms_output.put_line('我今年22岁了');
+END;
+--定义变量
+--年龄和姓名
+DECLARE
+  v_name VARCHAR2(20):='aaa';
+  v_age NUMBER(3):=18;
+BEGIN
+  dbms_output. put_line('姓名：'||v_name||'年龄：'||v_age);
+ END;
+
+ --从键盘输入姓名和年龄，在控制台输入
+ DECLARE
+  v_name VARCHAR2(20):='&vname';
+  v_age NUMBER(3):=&age;
+BEGIN
+  dbms_output. put_line('姓名：'||v_name||'年龄：'||v_age);
+END;
+--从键盘输入姓名和生日，在控制台输入
+ DECLARE
+  v_name VARCHAR2(20):='&vname';
+  v_birthday DATE:=&sysdate;
+BEGIN
+  dbms_output. put_line('姓名：'||v_name||'生日：'||to_char(v_birthday,'yyyy-mm-dd'));
+END;
+--接收日期
+DECLARE
+  v_birthday date:=&sysdate;
+BEGIN
+    dbms_output.put_line(to_char(v_birthday,'yyyy-mm-dd'));
+END;
+--编写一个PL/SQL程序输出7369的姓名和薪水
+DECLARE
+  v_empno NUMBER :=7369;
+  v_name VARCHAR2(10);
+  v_sal NUMBER(7,2);
+BEGIN
+    SELECT ename,sal INTO v_name,v_sal
+    FROM emp WHERE empno=7369;
+    dbms_output.put_line(v_name||':'||v_sal);
+END;
+----编写一个PL/SQL程序，查询30号部门的部门名称
+DECLARE
+  v_dname VARCHAR2(10);
+BEGIN
+    SELECT dname INTO v_dname
+    FROM dept WHERE deptno=30;
+    dbms_output.put_line(v_dname);
+END;
+---编写一个PL/SQL程序,输出两个数相减
+
+DECLARE
+  v_num1 NUMBER(3):=&num1;
+   v_num2 NUMBER(3):=&num2;
+BEGIN
+    dbms_output.put_line(v_num1-v_num2);
+END;
+--常量定义
+DECLARE
+    c_pi CONSTANT NUMBER(7,2):=3.14;
+BEGIN
+  dbms_output.put_line(c_pi);
+END;
+
+--创建一学生记录类型，有学号，姓名两个字段
+--查询学生表中id为yc003的记录
+DECLARE
+TYPE stu_record_type IS RECORD(
+v_sno VARCHAR2(32),
+v_sname VARCHAR2(20)
+);
+stu_record stu_record_type;
+BEGIN
+  SELECT sno,sname INTO stu_record.v_sno,stu_record.v_sname
+  FROM t_student
+  WHERE sno='0021';
+  dbms_output.put_line(stu_record.v_sno);
+  dbms_output.put_line(stu_record.v_sname);
+END;
+--参照数据类型
+DECLARE
+TYPE stu_record_type IS RECORD(
+v_sno t_student.sno%type,
+v_sname VARCHAR2(20)
+);
+stu_record stu_record_type;
+BEGIN
+  SELECT sno,sname INTO stu_record.v_sno,stu_record.v_sname
+  FROM t_student
+  WHERE sno='0021';
+  dbms_output.put_line(stu_record.v_sno);
+  dbms_output.put_line(stu_record.v_sname);
+END;
+
+--任务2：创建一班级记录类型，有班号，班级名称两个字段，查询班级表t_class中班号为101的记录，赋值给指定类型的变量，并显示出来。
+DECLARE
+TYPE cla_record_type IS RECORD(
+v_cno VARCHAR2(32),
+v_cname VARCHAR2(20)
+);
+cla_record cla_record_type;
+BEGIN
+  SELECT cno,cname INTO cla_record.v_cno,cla_record.v_cname
+  FROM t_class
+  WHERE cno='101';
+  dbms_output.put_line(cla_record.v_cno);
+  dbms_output.put_line(cla_record.v_cname);
+END;
+SELECT * FROM t_class;
+INSERT INTO t_class VALUES(101,'java一班');
+--
+DECLARE
+TYPE cla_record_type IS RECORD(
+v_cno t_class.cno%type,
+v_cname t_class.cname%type
+);
+cla_record cla_record_type;
+BEGIN
+  SELECT cno,cname INTO cla_record.v_cno,cla_record.v_cname
+  FROM t_class
+  WHERE cno='101';
+  dbms_output.put_line(cla_record.v_cno);
+  dbms_output.put_line(cla_record.v_cname);
+END;
+
+--声明一个%ROWTYPE类型的变量v_rowVar_emp
+DECLARE
+v_emp emp%rowtype;
+BEGIN
+  SELECT * INTO v_emp FROM emp WHERE empno=7369;
+  dbms_output.put_line(v_emp.ename||':'||v_emp.ename||','||v_emp.job);
+  END;
+  --
+  DECLARE
+v_class t_class%rowtype;
+BEGIN
+  SELECT * INTO v_class FROM t_class WHERE cno=2;
+  dbms_output.put_line(v_class.cno);
+  dbms_output.put_line(v_class.cname);
+END;
+--流程控制
+--IF ..THEN....END IF;
+--比较两个数的大小
+DECLARE
+v_num1 NUMBER(3):=&num1;
+v_num2 NUMBER(3):=&num2;
+BEGIN
+  IF v_num1< v_num2 THEN
+    dbms_output.put_line(v_num1||'小于'||v_num2);
+    ELSIF
+    dbms_output.put_line(v_num1||'大于'||v_num2);
+    ELSE
+      dbms_output.put_line(v_num1||'等于'||v_num2);
+END IF;
+END;
+
+---IF..THEN..ELSIF..THEN..ELSE...END IF
+
+DECLARE
+v_num1 NUMBER(3):=&num1;
+v_num2 NUMBER(3):=&num2;
+BEGIN
+  IF v_num1< v_num2 THEN
+    dbms_output.put_line(v_num1||'小于'||v_num2);
+    ELSIF v_num1> v_num2 THEN
+    dbms_output.put_line(v_num1||'大于'||v_num2);
+
+    ELSE
+     dbms_output.put_line(v_num1||'等于'||v_num2);
+END IF;
+END;
+--任务1：判断一个人的年龄是未成年人，青年人，中年人还是老年人
+DECLARE
+v_age NUMBER(3):=&age;
+BEGIN
+  IF v_age<18 THEN
+    dbms_output.put_line('未成年人');
+    ELSIF 18 <=v_age AND v_age < 40 THEN
+    dbms_output.put_line('青年人');
+    ELSIF 40<=v_age AND v_age < 60 THEN
+    dbms_output.put_line('中年人');
+    ELSE
+     dbms_output.put_line('老年人');
+END IF;
+END;
+任务2： 从控制台输入学生成绩 ，判断成绩的等级， 100  满分，99-80 优秀 ，79-60 及格  ，60以下不及格
+DECLARE
+v_grade NUMBER(3):=&grade;
+BEGIN
+  IF v_grade<60 THEN
+    dbms_output.put_line('不及格');
+    ELSIF 60 <=v_grade AND v_grade <= 79 THEN
+    dbms_output.put_line('及格');
+    ELSIF 80 <=v_grade AND v_grade <= 99 THEN
+    dbms_output.put_line('优秀');
+    ELSE
+     dbms_output.put_line('满分');
+END IF;
+END;
+--任务3：给定年份，输出当年是闰年还是平年 （求余用函数MOD(num1,num2)）
+DECLARE
+v_year NUMBER(8):=&year;
+v_num1 NUMBER(3):=400;
+v_num2 NUMBER(3):=4;
+v_num3 NUMBER(3):=100;
+BEGIN
+  IF MOD(v_year,v_num2)=0  AND MOD(v_year,v_num3)!=0 OR MOD(v_year,v_num1)=0 THEN
+    dbms_output.put_line(v_year||'是闰年');
+    ELSE
+      dbms_output.put_line(v_year||'是平年');
+END IF;
+END;
+--使用CASE语句统计部门编号为30部门的员工人数
+DECLARE
+  v_count NUMBER(3);
+BEGIN
+  SELECT count(*) INTO v_count FROM emp WHERE deptno = 30;
+  CASE
+    WHEN v_count = 0 THEN
+      dbms_output.put_line('该部门没人');
+    WHEN v_count = 1 THEN
+      dbms_output.put_line('该部门只有一个人');
+    ELSE
+      dbms_output.put_line('该部门有人数：' || v_count);
+  END CASE;
+END;
+-- 任务一： 使用CASE条件语句判断ALLEN员工薪水的等级，薪水在1000以下，等级为1，
+--1000~2000之间，等级为2，薪水在2000~3000之间，等级为3，
+--薪水在3000~5000之间，等级为4,   5000以上（含5000）等级为5
+DECLARE
+  v_sal NUMBER(8);
+BEGIN
+  SELECT sal INTO v_sal FROM emp WHERE ename='ALLEN';
+  CASE
+    WHEN v_sal <1000 THEN
+      dbms_output.put_line('等级为1');
+    WHEN 1000<=v_sal AND v_sal<2000 THEN
+      dbms_output.put_line('等级为2');
+       WHEN 2000<=v_sal AND v_sal<3000 THEN
+      dbms_output.put_line('等级为3');
+       WHEN 5000<=v_sal THEN
+      dbms_output.put_line('等级为5');
+    ELSE
+      dbms_output.put_line('等级为4' );
+  END CASE;
+END;
+
+--LOOP 循环
+--比较两个数的大小，如果第一个数小于第二个数，第一个数自动加1，
+--如果第一个数大于第二个数，第一个数就自动减1，直到两个数相等为止
+DECLARE
+  v_first  NUMBER(2) := 5;
+  v_second NUMBER(2) := 9;
+BEGIN
+  LOOP
+    IF v_first < v_second THEN
+      v_first := v_first + 1;
+    ELSIF v_first > v_second THEN
+      v_first := v_first - 1;
+    ELSE
+      EXIT WHEN v_first=v_second;
+    END IF;
+  END LOOP;
+  dbms_output.put_line('循环后：' || v_first);
+END;
+--
+DECLARE
+  v_first  NUMBER(4) := 80;
+  v_second NUMBER(4) := 90;
+BEGIN
+  WHILE v_first < v_second LOOP
+      v_first := v_first + 1;
+      END LOOP;
+  dbms_output.put_line('循环后:'|| v_first);
+END;
+-- FOR 循环 FOR ...IN..LOOP...END LOOP;
+--用for循环写出1+2+3+。。+100的和
+DECLARE
+  v_sum NUMBER(7) := 0;
+  v_num NUMBER(4) := 1;
+BEGIN
+  FOR v_num IN 1..100 LOOP
+    v_sum := v_sum + v_num;
+  END LOOP;
+  dbms_output.put_line(v_sum);
+END;
+--任务1：打印九九乘法口诀表
+DECLARE
+v_sum NUMBER(7) := 0;
+  v_num NUMBER(4) := 1;
+  v_num2 NUMBER(4) := 1;
+BEGIN
+  FOR v_num IN 1..9 LOOP
+    FOR v_num2 IN 1..v_num LOOP
+    v_sum := v_num * v_num2;
+    dbms_output.put(v_num||' * '||v_num2||'='||v_sum||'  ');
+    END LOOP;
+    dbms_output.put_line(' ');
+  END LOOP;
+END;
+--任务2：向测试表t_test循环插入100条数据。
+DECLARE
+  v_num NUMBER(4) := 1;
+BEGIN
+  FOR v_num IN 1..100 LOOP
+    INSERT INTO t_test VALUES(v_num,'ab','n','12345678998');
+  END LOOP;
+END;
+SELECT  * FROM t_test;

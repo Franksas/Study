@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <button id="btnadd" onclick="add(this)">添加</button>
+    <button id="btnremove" onclick="remove(this)">删除</button>
+    <button id="btnadd2" onclick="add2(this)">添加2</button>
+    <button id="btnremove2" onclick="remove2(this)">删除2</button>
+    <script type="text/javascript">
+        var div = document.createElement("div");
+        div.innerHTML = "这是一个新添加的div";
+        var body = document.getElementsByTagName("body")[0];
+        function add(selfEle){
+            body.appendChild(div);
+            selfEle.disabled = "disabled";//把增加按钮设置为不可用
+            document.getElementById("btnremove").disabled="";//
+        }
+        function remove(selfEle){
+            body.removeChild(div);
+            selfEle.disabled = "disabled";
+            document.getElementById("btnadd").disabled = "";
+        }
+        //一直添加
+        function add2(){
+            var div = document.createElement("div");
+            div.innerHTML = "这是新增的div";
+            body.appendChild(div);
+        }
+        //一直删除
+        function remove2(){
+            var divs = document.getElementsByTagName("div");
+            if(divs!=null && divs.length > 0){
+                body.removeChild(divs[divs.length-1]);
+            }
+        }
+    </script>
+</body>
+</html>

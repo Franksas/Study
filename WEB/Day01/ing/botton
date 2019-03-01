@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    &copy;CopyRight All Rights Reserved by ychs 2018
+
+</body>
+</html>

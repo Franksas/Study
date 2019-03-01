@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <span></span>
+<script type="text/javascript">
+    var timer;//作为定时器
+    function showTime(){
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        month = (month<10)?"0"+month:month;
+        var day = date.getDate();
+        day = (day<10)?"0"+day:day;
+        var hour = date.getHours();
+        hour = (hour<10)?"0"+hour:hour;
+        var minute = date.getMinutes();
+        minute = (minute<10)?"0"+minute:minute;
+        var second = date.getSeconds();
+        second = (second<10)?"0"+second:second;
+        var time = year + "-" + month + "-" + day +"-" + hour + ":" + minute + ":" + second;
+        $("span")[0].innerHTML = time;
+
+    }
+    showTime();
+    //定义一个计时器，参数1:计时器执行的方法，参数2：周期，毫秒
+   timer = window.setInterval("showTime()",1000);
+    //timer = window.setInterval(showTime,1000);
+    //取消计时，销毁计时器对象，如果使用完毕时,不销毁的话，资源得不到释放
+    //window.clearInterval();
+
+
+        //双击span，停止计时
+        $("span")[0].ondblclick = function () {
+            this.style.backgroundColor = "gray";
+            this.style.color = "white";
+            window.clearInterval(timer);
+        }
+        //单击span，计时开始
+        $("span")[0].onclick = function () {
+            this.style.backgroundColor = "green";
+            this.style.color = "black";
+            timer1 = window.setInterval(showTime,1000);
+        }
+        function $(eleInfo){
+            var type = eleInfo.substr(0,1);//获取第一个字符
+            if("#"==type){//根据id
+                return document.getElementById(eleInfo.substr(1));
+            }else if("." == type) {//根据类名
+                return document.getElementsByClassName(eleInfo.substr(1));
+            }else if(":"==type){//根据名称
+                return document.getElementsByName(eleInfo.substr(1));
+            }else{
+                return document.getElementsByTagName(eleInfo);
+            }
+
+        }
+</script>
+</body>
+</html>

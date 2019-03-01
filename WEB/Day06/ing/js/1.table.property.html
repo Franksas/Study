@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>1</td>
+            <td>李白</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>李治</td>
+            <td>女</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>杜甫</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>鱼玄机</td>
+            <td>女</td>
+        </tr>
+    </table>
+<script type="text/javascript">
+    var table =document.getElementsByTagName("table")[0];
+    alert("table 有[" + table.rows.length +"]行");
+    //var tr = table.rows[2];
+    var tr = table.firstElementChild.firstElementChild;
+   // alert(tr.nodeName);
+    alert("table 有[" + tr.cells.length +"]列");
+    alert("当前选中第[" + (tr.rowIndex+1) +"]行");
+</script>
+</body>
+</html>

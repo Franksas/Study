@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <span>5</span>
+    <span>秒后我将会消失</span>
+<script type="text/javascript">
+    var timesInterval,timerTimeout;
+    timesInterval = setInterval(function(){
+        //倒计时
+        var span = document.getElementsByTagName("span")[0];
+         span.innerHTML-=1;
+        if(span.innerHTML <=0) {
+            clearInterval(timesInterval);
+        }
+    },1000);
+    timerTimeout = setTimeout(function(){
+        //让第二个span消失
+        document.getElementsByTagName("span")[1].innerHTML="";
+        //让第一个span消失
+        document.getElementsByTagName("span")[0].innerHTML="";
+        clearInterval(timerTimeout);//停止定时器，销毁
+
+    },5000)
+
+</script>
+
+</body>
+</html>

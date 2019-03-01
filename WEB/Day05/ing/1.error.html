@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        try{
+            for(var i=0;i<10;i++) {
+                alert(i);//最直接最简单的调试，在交付程序后，不能出现任何调试性的alert
+                document.write("i:" + i);
+                document.write("<br>");
+                if(i>5){
+                    throw new Error("i值过大"+i);
+                }
+            }
+        }catch(e){
+            document.write("发生错误:"+e.message+"<br>");
+
+        }
+        finally{
+            document.write("程序结束");
+        }
+
+    </script>
+</body>
+</html>

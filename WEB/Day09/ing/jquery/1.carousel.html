@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+       span{
+            /**carousel的小方框*/
+            margin-left: 20px;
+            border: 1px solid gray;
+           padding: 3px 8px;
+        }
+        .selected{
+        /*carousel的选中*/
+            background: lightpink;
+        }
+        .unselected{
+            /*carousel的不选中*/
+            background: white;
+        }
+    </style>
+   <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <div id="imgDiv">
+
+    </div>
+    <div id="spanDiv">
+
+    </div>
+        <script type="text/javascript">
+            var Num = 5;//表示carousel小方框的个数
+            for(var i=1;i<=Num;i++){
+                $("#imgDiv").append("<img src='img/"+i +".JPG' >");
+                $("#spanDiv").append("<span>"+i +"</span>");
+            }
+            //让所有的图片隐藏
+            $("img").css("display","none");
+            //显示第一张图片
+//           $("img").eq(0).css("display","block");
+//            $("img").first().css("display","block");
+//            $("img:first").css("display","block");
+            $("img")[0].style.display = "block";
+            //第一个span显示选中
+          $("span:first").addClass("selected");
+            var index = 0;//当前选中的索引
+            var timer = setInterval(function(){
+                //// 第一步重置
+              /*  $("img").css("display","none");// 隐藏所有图片
+                $("span").removeClass("selected");// 让所有的小方框不选中
+
+                // 第二步让该 显示的显示和选中
+                $("img").eq(index).css("display","block");
+                $("span").eq(index).addClass("selected");*/
+                //
+                $("img").css("display","none").eq(index).css("display","block");
+               $("span").removeClass("selected").eq(index).addClass("selected");
+
+                if(++index == Num){
+                    index = 0;
+                }
+            },1000);
+        </script>
+</body>
+</html>

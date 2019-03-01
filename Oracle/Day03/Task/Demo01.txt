@@ -1,0 +1,18 @@
+--任务1：检索出工资大于1500的所有员工的员工姓名和工资。
+SELECT ename,sal FROM emp WHERE sal > 1500;
+
+--任务2、查询员工工资等于1500或3000的员工记录，显示这些员工的员工号，姓名，工资。
+SELECT empno,ename,sal FROM emp WHERE sal = any(1500,3000);
+
+--任务3、使用ALL关键字过滤工资同时不等于3000、950和800的员工记录并显示这些员工的员工号，姓名，工资。
+ SELECT empno,ename,sal FROM emp WHERE sal != all(3000,950,800);
+
+--任务4：检索10号部门职位是'CLERK' 工资大于1000的员工的姓名和工资及部门号。
+SELECT ename,sal,deptno FROM emp WHERE deptno=10 AND job='CLERK' AND sal> 1000;
+
+--任务5：检索20号部门职位是经理'MANAGER'或者工资大于3000的员工的姓名，工资和部门号。
+SELECT ename,sal,deptno FROM emp WHERE deptno=20 AND job='MANAGER' OR sal> 3000;
+--任务6： 检索不在30号部门并且工资不在1500到3000的员工的姓名，工资和部门号。
+SELECT ename,sal,deptno FROM emp WHERE deptno!=30 AND sal < 1500 AND sal > 3000;
+--任务7  删除班级表的所有信息。如果学生表里有班级相关信息，可以删除吗？为什么？如何删除其信息 ？
+DELETE FROM t_class;有外键关系时, 不能删除，从业务逻辑上来讲，要删除班级得先保证班级里没有学生。所以这个问题从业务上，先删除学生或学生表里的班级外键，才能删除班级

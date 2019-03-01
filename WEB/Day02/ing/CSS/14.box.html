@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title>盒子</title>
+    <style type="text/css">
+        *{
+            /*让当前页面所有的外边距和内边框都置0*/
+            margin:0px;
+            padding:0px;
+        }
+        div{
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border: 5px solid blue;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            /*常用的是一次赋值：上，右，下，左顺时针的方向赋值*/
+            /*padding: 10px 10px;*/
+            /*假设上下一样，左右一样*/
+            /*padding: 10px;*/
+            /*假设四个方向都是一样*/
+            /*margin: 10px;*/
+            /*如果三个数的值：1上边距，2左右边距，3下边距*/
+            margin: 10px 2px  4px;
+        }
+    </style>
+</head>
+<body>
+<div></div>
+<!--外边距合并，上下边距合并时，取外边距大的-->
+<p style="width: 100px;height: 100px;background: red; margin-bottom: 10px"></p>
+<p style="width: 100px;height: 100px;background:green;margin-top: 20px;"></p>
+<p style="margin: 20px 5px; width: 200px;height: 200px;background-color: #eeeeee">
+    <p style="margin: 10px 5px;width: 100px;height: 100px;background-color: red"></p>
+</p>
+</body>
+</html>

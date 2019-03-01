@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        div{
+            width: 200px;
+            height: 200px;
+        }
+        #div1{
+            background-color: red;
+            position: absolute;
+            top: 0px;
+            z-index: 11;
+            /*z-index: 值越大越能在最上面；越小，越在最底下，可以是负的，并且，要使用z-index属性时，此元素必须是绝对定位*/
+        }
+        #div2{
+            background-color: green;
+            position: absolute;
+            top: 0px;
+            z-index: 8;
+        }
+        #div3{
+            background-color: yellow;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+    <div id="div1" ></div>
+    <div id="div2" ></div>
+    <div id="div3" ></div>
+
+</body>
+</html>

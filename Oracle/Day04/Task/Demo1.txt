@@ -1,0 +1,38 @@
+
+-- 任务1：显示姓名中有“ %N%”的雇员
+SELECT ename FROM emp WHERE ename LIKE '%N%';
+
+--任务2：显示姓名中没有'L'字的员工的详细信息或含有'SM'字的员工信息
+SELECT * FROM emp WHERE ename NOT LIKE '%L%' or ename LIKE '%SM%';
+--任务3：查询姓名为“ALLEN”，或者工作为“ANALYST
+SELECT * FROM emp WHERE ename  LIKE 'ALLEN' or job LIKE 'ANALYST';
+--任务4  显示10 号部门的所有经理('MANAGER')和20号部门的所有职员('CLERK')的详细信息
+SELECT * FROM emp WHERE job LIKE 'MANAGER' AND deptno LIKE 10 OR job LIKE 'CLERK'AND deptno LIKE 20;
+--任务5: 检索部门号及其本部门的最低工资，并按着最低工资降序排序。
+SELECT deptno,min(sal)
+FROM emp
+GROUP BY deptno
+ORDER BY min(sal) DESC;
+
+--任务6:列出最高薪水大于2500的各个部门人数
+SELECT deptno,max(sal),count(*)
+FROM emp
+GROUP BY deptno
+HAVING max(sal)>2500;
+--任务7:查询成绩在70~80分之间的学生选课得分情况
+SELECT grade FROM t_scgrade
+WHERE grade<80 AND grade >=70;
+
+--任务8 列出每门选修课的平均成绩。按着每门课平均成绩降序排列。
+SELECT cno,avg(grade)
+FROM t_scgrade
+GROUP BY cno
+ORDER BY avg(grade) DESC;
+SELECT * FROM t_scgrade;
+
+--任务9 统计每门课及格的人数
+SELECT * FROM t_scgrade;
+SELECT  grade,cno,count(*)
+FROM t_scgrade
+GROUP BY cno,grade
+HAVING grade>60;

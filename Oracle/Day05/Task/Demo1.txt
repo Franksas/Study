@@ -1,0 +1,67 @@
+
+--任务一、创建视图“雇员表”包含了30号部门的雇员编号、姓名、以及薪水并使用了别名
+CREATE VIEW v_employeeType
+AS SELECT empno,ename,sal as salme,deptno
+FROM emp
+WHERE deptno = 30;
+SELECT empno,ename,salme,deptno
+FROM v_employeeType;
+
+--任务二  创建一只读视图，包含员工姓名，职位名称，工资及部门名称
+CREATE VIEW v_emp3
+AS
+SELECT ename,job,sal,deptno FROM emp
+WITH READ ONLY;
+SELECT ename,job,sal,deptno FROM  v_emp3;
+--任务三  创建一视图查询各个部门员工的最低工资，最高工资，平均工资，所在部门名称。
+CREATE VIEW v_deptsal
+AS SELECT d.deptno,d.dname,avg(e.sal) avgsal,min(e.sal) minsal,max(e.sal) maxsal
+FROM dept d,emp e
+WHERE d.deptno = e.deptno(+)
+GROUP BY d.deptno,d.dname;
+SELECT deptno,dname,avgsal,minsal, maxsal
+FROM  v_deptsal;
+
+--任务四  创建一个视图查询每个学生不及格的课程名称和成绩。
+CREATE VIEW v_coursegrade
+AS SELECT c.cname,s.grade
+FROM t_course c,t_scgrade s
+WHERE c.cno = s.cno(+)
+AND s.grade<60
+GROUP BY c.cno,s.grade,c.cname;
+
+SELECT cname,grade
+FROM  v_coursegrade;
+
+--任务一  显示所有职员的姓名及其所在部门的名称和工资
+SELECT e.ename,e.sal,d.dname
+FROM emp e,dept d
+WHERE e.deptno = d.deptno;
+
+--任务二   查询在研发部('RESEARCH')工作员工的编号，姓名，工作部门，工作所在地
+SELECT e.ename,e.empno,d.dname,d.loc
+FROM emp e,dept d
+WHERE e.deptno = d.deptno AND d.dname='RESEARCH';
+--任务三  查询每个员工的信息及工资级别
+SELECT e.*,s.grade
+FROM emp e,salgrade s
+WHERE e.sal BETWEEN s.losal AND s.hisal;
+
+--任务四   查询选修1002课程的学生的学生姓名
+SELECT s.sname
+FROM t_scgrade sg,t_student s
+WHERE sg.sno=s.sno AND sg.cno=1002;
+
+--任务五  查询Oracle不及格的学生姓名和成绩
+SELECT  s.sname, sc.grade
+FROM t_student  s, t_scgrade  sc, t_course c
+WHERE  s.sno = sc.sno
+AND  c.cno = sc.cno
+AND c.cname='Oracle'
+AND sc.grade<60;
+--任务六  查询平均分不及格的学生的学号，姓名，平均分
+SELECT s.sno,s.sname, avg(sg.grade)
+FROM t_student  s, t_scgrade  sg
+WHERE  s.sno = sg.sno
+GROUP BY s.sno,s.sname
+HAVING  avg(sg.grade)<60;

@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        table{
+            width: 400px;
+        }
+        thead{
+            background-color: aqua;
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<fieldset>
+    <legend>学生信息</legend>
+    <label>编号</label>
+    <input type="text" id="id">
+    <label>姓名</label>
+    <input type="text" id="name">
+    <label>性别</label>
+    <input type="radio" name="sex" value="0" checked>男
+    <input type="radio" name="sex" value="1" >女
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="button" onclick="add()" value="增加">
+    <input type="button" onclick="remove()" value="删除">
+</fieldset>
+<table>
+    <thead>
+        <tr>
+           <th><input type="checkbox" id="all"> </th>
+           <th>编号</th>
+           <th>姓名</th>
+           <th>性别</th>
+        </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    $("#all").onclick = function(){
+        var chbs = $(":chb");
+        for(var i=0;i<chbs.length;i++){
+            //让所有的复选框的状态跟all复选框状态一致
+            chbs [i].checked = this.checked;//this代表了事件源对象
+        }
+    }
+    function add(){
+        var id = $("#id").value;
+        // ^ 是开始，$是结尾[取值范围]，一个[]代表了一位数，{m-n}是代表了几位数字
+        //m是最小位，n是最大位，如果只有一个，说明只能是这个长度
+        //（）分组，|是或者的意思
+        var reg= /^(([0-9])|([1-9][0-9]{1,2}))$/;//只能是数字，并且是数字开头，数字结尾
+        if(!reg.test(id)){
+            alert("编号只能是一位数字");
+            return;//中断当前程序
+        }
+        var name = $("#name").value;
+        var reg1= /^[\u4E00-\u9FA5A-Za-z]{2,20}$/;
+        if(!reg1.test(name)){
+            alert("只能输入中文和英文");
+            return;
+        }
+        var sex = $(":sex")[0].checked?"男":"女";
+        var table = $("table")[0];
+        var tr = table.insertRow();
+        var td = tr.insertCell(0);
+        //第一列是一个复选框，并且复选框的value值即为要增加的学生的编号
+        //将来通过判断复选框的状态来决定是哪个学生的记录，因为复选框的value即为
+        //学生的编号
+        td.innerHTML = "<input type = 'checkbox' name ='chb' value = "+ id + ">";
+        td = tr.insertCell(1);
+        td.innerHTML = id;
+        td = tr.insertCell(2);
+        td.innerHTML = name;
+        td = tr.insertCell(3);
+        td.innerHTML = sex;
+        //把文本框的内容重置
+       $("#id").value = "";
+       $("#name").value = "";
+       $("#sex")[0].checked = "checked";
+    }
+    function remove(){
+        var chbs = $(":chb");
+        var table = $("table")[0];
+        //因为表格删除一行后，tr 索引会重新排序，所以正序删除会有删除不掉行的问题，我们可以从后往前删除，倒序会规避这个问题
+        for( var i=chbs.length-1;i>=0;i--){
+            if(chbs[i].checked){
+                //复选框的索引"+i"
+                //alert(chbs[i].parentElement.parentElement.rowIndex);
+                table.deleteRow(chbs[i].parentElement.parentElement.rowIndex);
+               /* var tr = chbs[i].parentElement.parentElement;
+                //console.log(Index);
+                */
+            }
+        }
+    }
+    function $(eleInfo){
+        var type = eleInfo.substr(0,1);//获取第一个字符
+        if("#"==type){//根据id
+            return document.getElementById(eleInfo.substr(1));
+        }else if("." == type) {//根据类名
+            return document.getElementsByClassName(eleInfo.substr(1));
+        }else if(":"==type){//根据名称
+            return document.getElementsByName(eleInfo.substr(1));
+        }else{
+            return document.getElementsByTagName(eleInfo);
+        }
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<button></button>
+<script type="text/javascript">
+    $("div").each(function(i){
+        //此处得到的是数组中的每一个元素，并且元素是dom对象，this代表了循环中的每一个当前元素
+        this.innerHTML = "div" + (i+1);
+        if(i%2==0){
+            $(this).css("backgroundColor","lightblue");
+        }else{
+            this.style.backgroundColor = "lightpink";
+        }
+    })
+    $("button").each(function(){});
+</script>
+</body>
+</html>

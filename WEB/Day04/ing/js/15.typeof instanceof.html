@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        var a;
+        var b=1;
+        var c="中国";
+        var d=new Date();
+        var f=function(){};
+        var arr=new Array();
+        function Cat(){};
+        var cat = new Cat();
+       /* document.write("a" + a +"typeof:" + typeof(a));
+        document.write("<br>b" + b +"typeof:" + typeof(b));
+        document.write("<br>c" + c +"typeof:" + typeof(c));
+        document.write("<br>d" + d +"typeof:" + typeof(d));
+        document.write("<br>f" + f +"typeof:" + typeof(f));
+        document.write("<br>arr" + arr +"typeof:" + typeof(arr));
+        document.write("<br>Cat" + Cat +"typeof:" + typeof(Cat));
+        var flag=true;
+        document.write("<br>flag" + flag+ "typeof:"+ typeof(flag));*/
+        //typeof得到number，underfined，string, boolean 其他的复杂的数据类型都是对象object
+        document.write("a" + a +"instanceof Object:" + (a instanceof Object));
+        document.write("<br>b" + b +"instanceof Number:" + (b instanceof Number));
+        document.write("<br>c" + c +"instanceof String:" + (c instanceof String));
+        document.write("<br>d" + d +"instanceof Date:" + (d instanceof Date));
+        document.write("<br>f" + f +"instanceof Function:" + (f instanceof Function));
+        document.write("<br>arr" + arr +"instanceof Array:" + (arr instanceof Array));
+        document.write("<br>cat" + cat +"instanceof Cat:" +(cat instanceof Cat));
+        var flag=true;
+        document.write("<br>flag" + flag+ "instanceof Object:"+ (flag instanceof Object));
+        var str=new String("abc");
+        document.write("<br>str" + str+ "instanceof String:"+ (flag instanceof String));
+        var num=new Number(1);
+        document.write("<br>num" + num+ "instanceof Number:"+ (flag instanceof Number));
+        //typeof判断基本常用数据类型比较有效，但是判断复合类型效果不明显，比如用户自定义类
+        //对于用户自定义类型建议使用instanceof来判断
+    </script>
+</head>
+<body>
+
+</body>
+</html>

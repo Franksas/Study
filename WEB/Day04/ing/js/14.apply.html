@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        var fun = function(a,b){
+            alert("a的值是："+a + "b的值是：" + b);
+        }
+        //fun(1,2);//函数的第一种调用方式，直接调用
+        //fun.call(window,1,2);//函数的第二种调用使用call，函数入参列表要写完整
+        //fun.apply(window,[1,2]);//函数的第三种调用，函数入参可以做一个整体对象传入
+        var example=function(num1,num2){
+            fun.apply(window,arguments);//此处的arguments 代表了example方法的入参列表
+            //可以把这个入参列表对象当作fun函数的入参传进来，感觉比call简洁
+        }
+        example(1,2);
+    </script>
+</head>
+<body>
+
+</body>
+</html>

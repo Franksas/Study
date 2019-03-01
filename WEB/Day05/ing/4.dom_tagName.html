@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        <!--当点击全选复选框的时候，触发单击事件，单击事件会调用此函数-->
+        function allChb(ele){
+            //让页面中的（表格中的）所有的复选框的状态和ele的选中状态保持一致
+            //获取页面中的所有的复选框它将是一个数组集
+            var allCheckbox = document.getElementsByTagName("input");
+            //
+            for(var i=0;i<allCheckbox.length;i++){
+                //checked属性是否选中的状态
+                if(allCheckbox[i].type = "checked"){
+                    //checked属性书是否选中的状态
+                    allCheckbox[i].checked = ele.checked;
+                }
+
+            }
+        }
+    </script>
+</head>
+<body>
+<!--事件，给元素指定x类型事件，触发事件，事件背后要执行的代码-->
+<label>点全选的复选框会选中所有的复选框，或取消所有的复选框</label>
+<table>
+    <thead>
+    <tr>
+        <!-- 给全选复选框指定一个单击事件的属性，通过属性值指定一个执行该事件的一个函数，比如allCkb(this),
+        allChb是函数名，this是函数参数，this在此代表了当前复选框对象-->
+        <th><input type="checkbox" id="all" onclick=""></th>
+        <th>编号</th>
+        <th>姓名</th>
+        <th>性别</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="checkbox"> </td>
+            <td>1</td>
+            <td>李白</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox"> </td>
+            <td>2</td>
+            <td>杜甫</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox"> </td>
+            <td>3</td>
+            <td>杜牧</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox"> </td>
+            <td>4</td>
+            <td>李清照</td>
+            <td>女</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

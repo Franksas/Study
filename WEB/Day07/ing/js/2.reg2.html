@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        table{
+            width: 80%;
+
+        }
+        #username,#url{
+            width: 280px;
+
+        }
+        span{
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <form action="">
+        <table>
+            <tr>
+                <td>编号：</td>
+                <td><input type="text" name="id" id="id" placeholder="四位数字" maxlength="4"><span></span></td>
+            </tr>
+            <tr>
+                <td>姓名：</td>
+                <td><input type="text" name="" id="username" placeholder="4-8位字符，不能空格开头和结尾" maxlength="8"><span></span></td>
+
+            </tr>
+            <tr>
+                <td>性别：</td>
+                <td>
+                    <input type="radio" name="sex" value="0"checked>男
+                    <input type="radio" name="sex" value="1">女
+                </td>
+            </tr>
+            <tr>
+                <td>年龄：</td>
+                <td>
+                    <input type="text" name="age" id="age" placeholder="最小18，最大60"maxlength="2"><span></span>
+                </td>
+            </tr>
+            <tr>
+                <td>邮箱：</td>
+                <td>
+                    <input type="text" name="email" id="email" placeholder="xxxx@xxx.com/cn/gov"><span></span>
+                </td>
+            </tr>
+            <tr>
+                <td>个人网址：</td>
+                <td>
+                    <input type="text" name="url" id="url"><span></span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                <button>提交</button>
+                <button type="submit">重置</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+<script type="text/javascript">
+    var btnSubmit = $("button")[0];
+    btnSubmit.onclick = function() {
+        var reg;
+        var submitFlag = true;
+        var idFlag=true,usernameFlag=true,ageFlag=true,emailFlag=true,urlFlag=true;
+        var id = $("#id");
+        //四位数字
+        reg = /^\d{4}$/;
+        if (!reg.test(id.value)) {
+            //alert("编号输入不合法，请重新输入");
+            id.nextElementSibling.innerHTML = "编号输入不合法，请重新输入";
+            id.style.backgroundColor = "yellow";
+            id.focus();//将光标传入其中
+            idFlag = false;
+        }
+        reg = /^\S.{2,6}\S$/;
+        var username = $("#username");
+        if (!reg.test(username.value)) {
+            //alert("姓名输入不合法，请重新输入");
+            username.nextElementSibling.innerHTML = "姓名输入不合法，请重新输入";
+            username.style.backgroundColor = "blue";
+            username.focus();
+            usernameFlag = false;
+        }
+        var age = $("#age");
+        reg = /^\d{2}$/;
+        if (reg.test(age.value)) {
+
+            if (age.value < 18 || age.value > 60) {
+                // alert("年龄输入不合法，请重新输入");
+                age.nextElementSibling.innerHTML = "年龄输入不合法，请重新输入";
+                age.style.backgroundColor = "red";
+                age.focus();
+                ageFlag = false;
+            } else {
+                age.nextElementSibling.innerHTML = "";
+            }
+        } else {
+            //alert("年龄输入不合法，请重新输入");
+            age.nextElementSibling.innerHTML = "年龄输入不合法，请重新输";
+            age.style.backgroundColor = "lightpink";
+            age.focus();
+            ageFlag = false;
+        }
+
+
+       reg = /^\w+@\w+\.(com|cn|gov)$/;
+        var email = $("#email");
+        if (!reg.test(email.value)) {
+            email.nextElementSibling.innerHTML = "邮箱输入不合法，请重新输入";
+            email.style.backgroundColor = "green";
+            email.focus();//将光标传入其中
+            emailFlag = false;
+        } else {
+            email.nextElementSibling.innerHTML = "";
+            email.style.backgroundColor = "white";
+        }
+        urlFlag = checkURL();//调用验证url 的方法
+        submitFlag = idFlag&&usernameFlag&&ageFlag&&emailFlag&&urlFlag;
+        return submitFlag;
+
+    }
+    //验证url 的内容是否合法,如果通过，返回true，否则false
+    function checkURL(){
+        var reg = /^(http|https):\/\/\S+$/;
+        var url = $("#url");
+        if (!reg.test(url.value)) {
+            url.nextElementSibling.innerHTML = "地址输入不合法，请重新输入";
+            url.style.backgroundColor = "black";
+            url.focus();//将光标传入其中
+            return false;
+        } else {
+            url.nextElementSibling.innerHTML = "";
+           url.style.backgroundColor = "white";
+            return true;
+        }
+    }
+    function $(eleInfo){
+        var type = eleInfo.substr(0,1);//获取第一个字符
+        if("#"==type){//根据id
+            return document.getElementById(eleInfo.substr(1));
+        }else if("." == type) {//根据类名
+            return document.getElementsByClassName(eleInfo.substr(1));
+        }else if(":"==type){//根据名称
+            return document.getElementsByName(eleInfo.substr(1));
+        }else{
+            return document.getElementsByTagName(eleInfo);
+        }
+
+    }
+</script>
+</body>
+</html>

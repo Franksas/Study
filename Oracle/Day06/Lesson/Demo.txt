@@ -1,0 +1,40 @@
+--任务一：检索与SCOTT从事相同工作的员工信息。
+SELECT ename,empno,job
+FROM emp
+WHERE job=(
+      SELECT job
+      FROM emp
+      WHERE ename='SCOTT'
+);
+--任务二：检索和名叫SCOTT的员工相同工资的员工信息，但不显示SCOTT。显示字段：员工号、员工名、工资。
+SELECT ename,empno,sal
+FROM emp
+WHERE sal=(
+      SELECT sal
+      FROM emp
+      WHERE ename='SCOTT'
+
+)AND ename！='SCOTT';
+
+
+--任务三：在emp表中，查询出既不是最高工资，也不是最低工资的员工信息
+SELECT *
+FROM emp
+WHERE sal!=(
+      SELECT min(sal)
+      FROM emp
+
+)AND sal!=（
+     SELECT max(sal)
+      FROM emp
+）;
+
+--任务四：查询出工资低于所有员工平均工资的员工姓名和工资，按照工资高低降序排序。
+
+SELECT ename，sal
+FROM emp
+WHERE sal<(
+      SELECT avg(sal)
+      FROM emp
+
+) ORDER BY sal DESC;

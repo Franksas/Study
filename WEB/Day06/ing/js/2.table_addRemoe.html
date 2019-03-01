@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <button  type="button" onclick="add()">增加</button>
+    <button  type="button" onclick="remove()">删除</button>
+    <script type="text/javascript">
+        var rowNum = 0;
+        function add(){
+            //首先获取table对象
+            var table = $("table")[0];
+            //如果当前页面中有table，则不再创建table对象，否则创建新的对象
+            if(!table){   //JS中对象存在，则返回true
+                table = document.createElement("table");
+            }
+            var body = $("body")[0];
+            var tr = table.insertRow(rowNum++);//创建并插入一行
+            for(var i=0;i<3;i++){
+                var td = tr.insertCell(i);//创建并插入一列
+                td.innerHTML="第["+(rowNum)+"]行，第["+ (td.cellIndex+1) +"]列";
+            }
+           /* for(var i=0;i< 5;i++){
+                var tr = table.insertRow(i);
+                for(var j=0;j<3;j++){
+                    var td = tr.insertCell(j);
+                    td.innerHTML = "第["+(i+1)+"]行，第["+ (j+1) +"]列";
+                }
+            }*/
+            body.appendChild(table);
+        }
+        function remove(){
+            var table = $("table")[0];
+            if (table){
+                //如果当前页面存在table
+                //var tr = table.rows[table.rows.length-1];
+                //取得最后一行
+                var tr = table.lastElementChild.lastElementChild;
+                //alert(tr.firstElementChild.innerHTML);//第一列
+                //如果表格中还有行，则删除
+                if(tr){
+                    table.deleteRow(tr.rowIndex);//删除指定行索引的tr
+                    rowNum--;//删除行后，把rowNum减--
+                }
+            }
+
+        }
+        function $(eleInfo){
+            var type = eleInfo.substr(0,1);//获取第一个字符
+            if("#"==type){
+                return document.getElementById(eleInfo.substr(1));
+            }else if("." == type){
+                return document.getElementsByClassName(eleInfo.substr(1));
+            }else{
+                return document.getElementsByTagName(eleInfo);
+            }
+
+        }
+    </script>
+
+
+</body>
+</html>

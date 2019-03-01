@@ -1,0 +1,101 @@
+--在HR用户模式下：
+-- 任务一：查询出比编号151雇员工资高的其他雇员
+SELECT * FROM employees
+WHERE salary>(
+SELECT salary FROM employees
+WHERE employee_id =151);
+--任务二：显示和雇员151从事相同工作并且工资大于雇员123的雇员的姓名和工作
+SELECT job_id,first_name||last_name as name  FROM employees
+WHERE salary>(
+SELECT salary FROM employees
+WHERE employee_id =123)
+AND job_id=(
+SELECT job_id FROM employees
+WHERE employee_id =151);
+--任务三：显示工资最低的雇员的姓名、工作、和工资
+SELECT first_name||last_name as name，job_id,salary FROM employees
+WHERE salary=(
+SELECT min(salary) FROM employees);
+--任务四：从学生表t_student和学生选课成绩表t_scgrade中查询出选修了课程编号1003的学生编号和姓名。
+SELECT s.sno,s.sname FROM t_student s
+WHERE s.sno=(
+SELECT sg.sno FROM t_scgrade sg
+WHERE s.sno=sg.sno AND sg.cno=1003);
+
+--任务五：查询大于课程编号为1002中任意一个成绩的其他成绩信息
+SELECT * FROM t_scgrade
+WHERE grade > (
+SELECT min(grade) FROM t_scgrade
+WHERE cno=1002);
+select * from t_scgrade;
+--任务六：查询大于课程编号为1002中所有成绩的其他成绩信息
+SELECT * FROM t_scgrade
+WHERE grade > ALL (
+SELECT min(grade) FROM t_scgrade
+WHERE cno=1002);
+
+--在SCOTT用户模式下：
+--任务七  查询与SMITH所在部门和职务相同的员工信息
+SELECT *
+FROM emp
+WHERE deptno =(SELECT deptno
+FROM emp
+WHERE ename='SMITH')
+AND job= (SELECT job
+FROM emp
+WHERE ename='SMITH');
+
+--任务八  显示BLAKE同部门的所有员工姓名,职位和部门号，但不显示BLAKE。
+SELECT ename,job
+FROM emp
+WHERE deptno = (
+      SELECT  deptno
+      FROM emp
+      WHERE ename='BLAKE'
+
+)AND ename！='BLAKE';
+--任务九  查询与10号部门员工职位相同的员工信息。
+SELECT *
+FROM emp
+WHERE job in (
+      SELECT job
+      FROM emp
+      WHERE deptno=10
+
+);
+--任务十  显示超过平均工资的所有员工名、工资和部门号
+SELECT ename,sal，deptno
+FROM emp
+WHERE sal> (SELECT avg(sal)
+FROM emp);
+--任务十一   显示超过所有部门平均工资的所有员工名、工资和部门号
+SELECT ename,sal，deptno
+FROM emp
+WHERE sal > ALL (SELECT avg(sal)
+FROM emp
+GROUP BY deptno);
+--任务十二  显示高于CLERK岗位所有雇员工资的所有雇员名、工资和岗位
+SELECT ename,sal，job
+FROM emp
+WHERE sal > ALL (SELECT sal
+FROM emp
+WHERE job='CLERK');
+
+--任务十三  显示工资、补助与SCOTT完全一致的所有雇员名、工资和补助
+SELECT ename,sal，comm
+FROM emp
+WHERE (sal,NVL(comm,0)) IN (SELECT sal,NVL(comm,0)
+FROM emp
+WHERE ename='SCOTT');
+--任务十四  查询比10号部门员工工资高的员工信息（姓名，薪水，部门号）
+SELECT ename,sal，deptno
+FROM emp
+WHERE sal > ANY (SELECT sal
+FROM emp
+WHERE deptno=10);
+--任务十五  查询比30号部门所有员工工资高的员工信息（姓名，薪水，部门号）
+SELECT ename,sal，deptno
+FROM emp
+WHERE sal > ALL(SELECT sal
+FROM emp
+WHERE deptno=30);

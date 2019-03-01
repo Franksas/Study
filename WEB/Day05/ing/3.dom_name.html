@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <label>用户名：</label>
+    <!--name这个属性主要是提交表单到后台，后台根据name属性获取页面的值-->
+    <input type="text" name="username" placeholder="输入4-10个字母或数字，以字母开头" style="width: 300px" myInfo="这是一个测试信息">
+
+    <script type="text/javascript">
+        var username = document.getElementsByName("username");
+        //此时username是一个数组，因为方法本身返回的就是数组
+        if(username!=null && username.length ==1){
+            var usernameEle = username[0];//数组的第一个元素
+           alert("usernameEle.value" + usernameEle.value);
+            usernameEle.value = "Tom";
+            alert(usernameEle.getAttribute("myInfo"));//通过getAttribute("自动一个属性"）获取
+        }
+    </script>
+</body>
+</html>

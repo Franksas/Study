@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        function test(){
+            //获取页面中的所有的文本框中的值，如果是内容，则进行拼接
+            //获取页面中的所有的文本框中的内容，通过标签的名称input
+            //inputs是一个数组
+            var  inputs = document.getElementsByTagName("input");
+            var result = "";//先定义一下
+            for(var  i=0;i<inputs.length;i++){
+                if(inputs[i].value!=""){
+                    result+=inputs[i].value+",";
+                }
+            }
+            var lastIndex = result.lastIndexOf(",");
+            alert("lastIndex of ',':" + lastIndex);
+            //如果字符串中存在","则删除最后一个元素，即；逗号
+            if(result.indexOf(",")!=1){
+                result = result.substring(0,result.length-1);
+            }
+            alert("result:" + result);
+        }
+    </script>
+</head>
+<body>
+    <form>
+        <input><input><input>
+        <!-- 单击提交按钮触发一个事件，单击事件，这个事件调用一个方法test(),test()需要事先在脚本中定义-->
+        <button onclick="test()" type="button">提交</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title>父子选择器</title>
+    <style type="text/css">
+        div> span{
+            color: red;
+            font-size: 5em;
+            /*正常字体是1em,这里是放大5倍*/
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <span>这是一个行内的span标签，它的颜色将变为红色</span>
+        <p>
+            这里是段落
+            <span>这里是段落中的&lt;span&gt;元素，它的颜色是默认颜色</span>
+        </p>
+        <span>这里是另一个&lt;span&gt;元素，它也是div的子标签（儿子）它的颜色也是红色，字体也是5em</span>
+    </div>
+
+</body>
+</html>

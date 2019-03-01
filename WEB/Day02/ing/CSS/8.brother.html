@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title>兄弟选择器</title>
+    <style type="text/css">
+        #div1+p{  /*只有紧邻div1，并且是p标签的才起作用*/
+            color: red;
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body>
+    <div id="div1">
+        这里是id为div1的div元素，要控制紧挨着它的&lt;&gt;标签的元素字体为红色
+    </div>
+
+    <p>
+        少年易老学难成，一寸光阴不可轻。
+        未觉池塘春草梦，阶前梧叶已秋声。
+    </p>
+    <p>
+            这里是div后，第二个&lt;&gt;标签，它的颜色是默认色
+    </p>
+</body>
+</html>

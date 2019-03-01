@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+    span{
+        color: red;
+
+    }
+    </style>
+</head>
+<body>
+<form>
+    <label>学号</label>
+    <input type="text" id="id" name="id" placeholder="四位数字">
+    <span></span>
+    <br>
+    <label>姓名</label>
+    <input type="text" id="username" name="username" placeholder="输入4-8位字符，不能空格开始和结尾">
+    <span></span>
+    <br>
+    <button>提交</button>
+    <button type="reset">重置</button>
+</form>
+  <script type="text/javascript" >
+      function add(exp){
+          //传入的字符串，这个字符串是个表达式，
+          //方法返回表达式计算的结果
+          return eval(exp);
+
+      }
+      /* var result = add("1+2-3*4/5*6+9+200");
+      alert(result);
+      result add();*/
+
+      $("button")[0].onclick=function(){
+         var submitFlag = true,idFlag=true,usernameFlag=true;
+          idFlag =checkId();
+          usernameFlag = checkUsername();//校验姓名信息
+          submitFlag = idFlag&&usernameFlag;
+
+          return submitFlag
+      }
+      var inputs =$("input");
+      for(var i=0;i<inputs.length;i++){
+          var name = inputs[i].name;
+          var fnName ="check" + name.substr(0,1).toUpperCase() + name.substr(1);//”checkId“ checkUsername
+          inputs[i].onblur = eval(fnName);//把字符串类型转换为function对象
+      }
+      //验证id的信息
+      function checkId(){
+          var reg = /^\d{4}$/;
+          var id= $("#id");
+          if (reg.test(id.value)) {
+             id.nextElementSibling.innerHTML = "";
+              id.style.backgroundColor = "green";
+              return true;
+          } else {
+              id.nextElementSibling.innerHTML = "编号输入不合法，请重新输入";
+              id.style.backgroundColor = "gray";
+              id.focus();//将光标传入其中
+              return false;
+          }
+      }
+      //验证姓名
+      function checkUsername(){
+          var reg = /^\S.{2,6}$/;
+          var username = $("#username");
+          if(reg.test(username.value)){
+              username.nextElementSibling.innerHTML = "";
+              username.style.backgroundColor = "yellow";
+              return true;
+          } else {
+              username.nextElementSibling.innerHTML = "姓名输入不合法，请重新输入";
+              username.style.backgroundColor = "blue";
+              username.focus();
+             return false;
+          }
+
+      }
+      function $(eleInfo){
+          var type = eleInfo.substr(0,1);//获取第一个字符
+          if("#"==type){//根据id
+              return document.getElementById(eleInfo.substr(1));
+          }else if("." == type) {//根据类名
+              return document.getElementsByClassName(eleInfo.substr(1));
+          }else if(":"==type){//根据名称
+              return document.getElementsByName(eleInfo.substr(1));
+          }else{
+              return document.getElementsByTagName(eleInfo);
+          }
+
+      }
+  </script>
+
+</body>
+</html>

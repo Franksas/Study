@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        #out{
+            position: relative;
+            top: 100px;
+            left: 100px;
+            width: 400px;
+            height: 400px;
+            border: 1px solid red;
+
+        }
+        #div2{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            position: relative;
+            top:450px;
+            left: 350px;
+            /*观察到div2已经移出 了容器，但是div3没有影响，不会移动，说明div2并没有释放它的空间*/
+        }
+        #div3{
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+<p>下面的红框div是一个容器</p>
+<div id="out">
+    <div id="div2"></div>
+    <div id="div3"></div>
+</div>
+</body>
+</html>

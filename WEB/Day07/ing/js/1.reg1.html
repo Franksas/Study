@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action="">
+    <label>编号</label>
+    <input type="text" name="id" id="id" placeholder="请输入4位数字">
+    <button>提交</button>
+    <button type="reset">重置</button>
+</form>
+<script type="text/javascript">
+    var  btnSubmit = $("button")[0];
+    //虽然btnSubmit有提交的功能，不用专门去提交，但是为了保证系统的数据的有效性和安全性，
+    // 要在提交前对数据进行正则的有效性效验
+    btnSubmit.onclick = function(){
+        var reg;//正则对象
+        var id = $("#id");
+        //reg = new RegExp("/^[0-9][4]$/");
+        //reg = /^[0-9][4]$/;
+       /* reg = /^\d[4]$/;//\d转义，代表了数字的意思
+        if(!reg.test(id.value)){
+            alert("编号信息不合法，请重新输入");
+            return false;
+        }*/
+        //代表了任意字符
+       /* reg = /^.{4}$/;
+        alert("1234:"+ reg.test("1234"))*/
+       /* reg = /^.{5}$/;
+        alert("al,中"+ reg.test("al.中"));*/
+        reg = /^\D+$/;//此表达式代表了只能是非数字，+表示至少有一个
+//        var str = "1234";
+//        alert(str + ":" +reg.test("str"));
+       /* var str = "a,8中";
+        alert("al,中"+ reg.test(str));*/
+
+        /* reg = /^\D*$/;//只能是非数字，可以没有，也可以是任意多个
+         alert("："+ reg.test(""));*///true
+        /* reg = /^\D?$/;//?表示可以没有，但最多只能是一个
+         /*alert("："+ reg.test(""));//true
+         alert("a："+ reg.test("a"));//true
+         alert("aa："+ reg.test("aa"));//false*!/
+
+         alert("/^[0-9]+$/".test("1"));//true
+        alert("/^[^0-9]+/".test("a"));//true
+        //不能以空白开始和结尾，但中间至少有一个空白
+        alert(/^\S\s+\S$/.test("李 白"));*/
+
+        //什么是单词？代表可以是数字字母下划线
+       // alert(/^\w*$/.test("al_AZ"));//false
+        //\W代表了非单词，用范围表示如下
+        //alert(/^[^A-Za-z0-9]*$/.test(""));
+        //并集
+    /*    var str = "abc.dmnop";
+        alert(/^[a-dm-p]+$/.test(str));*/
+        //交集
+        alert(/^[a-z&[def]]+$/.test("fed"));
+        //return false;//如果此处返回false，则页面不会进行提交
+    }
+    function $(eleInfo){
+        var type = eleInfo.substr(0,1);//获取第一个字符
+        if("#"==type){//根据id
+            return document.getElementById(eleInfo.substr(1));
+        }else if("." == type) {//根据类名
+            return document.getElementsByClassName(eleInfo.substr(1));
+        }else if(":"==type){//根据名称
+            return document.getElementsByName(eleInfo.substr(1));
+        }else{
+            return document.getElementsByTagName(eleInfo);
+        }
+
+    }
+</script>
+
+</body>
+</html>

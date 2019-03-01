@@ -1,0 +1,36 @@
+--任务一：创建学生表t_student（学号sno，姓名sname，性别sex，出生日期birthday，电话号码tel，电子邮箱email, 班号cno）
+--添加约束：学号为主键，姓名：不为空， 电话号码长度要检查约束，电子邮箱唯一约束
+ CREATE TABLE t_student(
+       sno VARCHAR2(32) PRIMARY KEY,
+       sname VARCHAR2(20) NOT NULL,
+       sex CHAR(2) CHECK(sex IN('男','女')),
+       birthday DATE,
+       tel NUMBER(11) CHECK(length(tel)<=11),
+       email VARCHAR2(20) UNIQUE,
+       cno VARCHAR2(32)
+);
+
+-- 任务二：创建课程表t_course（课程编号cno，课程名称cname，学分credit，学时hours,授课老师teacher）
+ CREATE TABLE t_course(
+       cno NUMBER(10) PRIMARY KEY,
+       cname VARCHAR2(20),
+       credit VARCHAR(20),
+       hours VARCHAR(16),
+       teacher VARCHAR2(16)
+
+);
+--任务三：创建学生选课成绩表t_scgrade（学号sno，课程编号cno，成绩grade）学号和课程编号是联合主键，学号和课程表都是外键
+
+CREATE TABLE t_scgrade(
+       sno VARCHAR2(32) PRIMARY KEY,
+       cno NUMBER(10) REFERENCES t_course(cno),
+       grade VARCHAR2(16),
+       CONSTRAINT pk_t_scgrade PRIMARY KEY(sno,cno),
+       CONSTRAINT fk_t_sccgrade FOREIGN KEY(sno) REFERENCES t_course(sno)
+);
+--- 任务四：创建班级表t_class（班号cno，班级名称cname），给上面建好的学生表的列cno添加外键约束。
+CREATE TABLE t_class(
+       cno VARCHAR2(32) PRIMARY KEY,
+       cname VARCHAR2(20),
+       CONSTRAINT fk_t_student FOREIGN KEY(cno) REFERENCES t_class(cno)
+);

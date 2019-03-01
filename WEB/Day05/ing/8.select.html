@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <label>班级：</label>
+    <select id="clazz">
+        <option value="-1">--请选择--</option>
+        <option value="8">Java1008</option>
+        <option value="9">Java1009</option>
+        <option value="10">Java1010</option>
+    </select>
+<button onclick="showClazz()">查看选中的班级</button>
+<script type="text/javascript">
+  /*  function showClazz(){
+        //查看当前班级下拉选中的信息
+        var clazz = document.getElementById("clazz");
+        var value = clazz.value;//这个value就是当前选中的下拉框的值
+        alert("您选中了："+ value + "班");
+        if(value == "-1"){
+            alert("班级是必选项，请选择");
+        }else{
+            alert("您选中了："+ value + "班");
+        }
+    }*/
+    function showClazz(){
+        //获取选中 的项目的索引
+        var clazz = document.getElementById("clazz");
+        var selectedIndex= clazz.selectedIndex;
+        //Clazz.options是Clazz下拉列表的所有的选项的集合
+        var option = clazz.options[selectedIndex];//得到选中项
+        alert("您选中了："+ option.text);
+    }
+  //假设这是个修改页面，根据后台传过来的学生的班级，进行自动的显示
+  //当前学生的班级信息
+    var clazzInfo = 8;//后台传递的只能是下拉项的value值
+    var Clazz = document.getElementById("clzz");
+  //clazz.value = clazzInfo;//这是第一种方式
+    var options = clazz.options;
+    for(var i = 0;i<options.length;i++){
+        if(options[i].value == clazzInfo){
+            options[i].selected = "selected";//这个选项被选中，第二个方式
+        }
+    }
+
+
+
+</script>
+</body>
+</html>

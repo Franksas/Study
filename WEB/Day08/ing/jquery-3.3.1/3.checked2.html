@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="jquery-3.3.1.min.js">
+
+    </script>
+</head>
+<body>
+<div>
+    <button type="button" onclick="remove()">删除</button>
+</div>
+    <table>
+        <thead>
+            <tr>
+                <th><input type="checkbox" onclick="allChb(this)"> </th>
+                <th>编号</th>
+                <th>姓名</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="checkbox"> </td>
+                <td>1</td>
+                <td>李白</td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox"> </td>
+                <td>2</td>
+                <td>杜甫</td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox"> </td>
+                <td>3</td>
+                <td>李清照</td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox"> </td>
+                <td>4</td>
+                <td>杜牧</td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox"> </td>
+                <td>5</td>
+                <td>李治</td>
+
+            </tr>
+        </tbody>
+    </table>
+<script type="text/javascript">
+    function allChb(ele){
+        $("tbody :checkbox").each(function(){
+            //this就是每一个复选框
+            this.checked = ele.checked;
+        });
+    }
+    function remove(){
+        $("tbody :checked").each(function(){
+         // $("table")[0].deleteRow(his.parentElement.parentElement.rowIndex);
+            var obj = $(this).parent().parent();//找复选框的爷爷
+
+            //$("table")[0].deleteRow(obj[0].rowIndex);
+           // $("table")[0].deleteRow(obj.attr("rowIndex"));
+            var obj = $(this).parents("tr");//查找当前复选框元素的所有祖先中的tr
+/           $("table")[0].deleteRow(obj[0].rowIndex);
+
+        });
+    }
+</script>
+</body>
+</html>

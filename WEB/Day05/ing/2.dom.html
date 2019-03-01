@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <label>用户名：</label><input type="text" id="username">
+    <script type="text/javascript">
+        try {
+
+            //如果根据此id没有在dom寻找到相应的元素，则返回null;
+            var username = document.getElementById("username");
+//        alert(username);
+            if (username != null) {
+
+            }
+            username.value="abc";
+        }catch(e){
+            alert("出错了："+e.message);
+        }
+    </script>
+</body>
+</html>

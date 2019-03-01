@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        function allChb(ele){
+            //根据名称itemChb获取的元素肯定都是复选框
+            var allCheckbox = document.getElementsByName("itemChb");
+            for(var i=0;i<allCheckbox.length;i++){
+                    allCheckbox[i].checked = ele.checked;
+            }
+        }
+    </script>
+</head>
+<body>
+<!--事件，给元素指定x类型事件，触发事件，事件背后要执行的代码-->
+<label>点全选的复选框会选中所有的复选框，或取消所有的复选框</label>
+<table>
+    <thead>
+    <tr>
+        <!-- 给全选复选框指定一个单击事件的属性，通过属性值指定一个执行该事件的一个函数，比如allCkb(this),
+        allChb是函数名，this是函数参数，this在此代表了当前复选框对象-->
+        <th><input type="checkbox" id="all" onclick="allChb(this)"></th>
+        <th>编号</th>
+        <th>姓名</th>
+        <th>性别</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="checkbox" name="itemChb"> </td>
+            <td>1</td>
+            <td>李白</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="itemChb"> </td>
+            <td>2</td>
+            <td>杜甫</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="itemChb"> </td>
+            <td>3</td>
+            <td>杜牧</td>
+            <td>男</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="itemChb"> </td>
+            <td>4</td>
+            <td>李清照</td>
+            <td>女</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<label>班级：</label>
+<select id="clazz"></select>
+<button onclick="add()">添加选项</button>
+<input type="text" id="optionValue" placeholder="选项的值">
+<input type="text" id="optionText" placeholder="选项的文本">
+<button onclick="remove()">移除选项</button>
+<script type="text/javascript">
+    var clazz = document.getElementById("clazz");
+    function add(){
+        var option = document.createElement("option");
+        option.value = $("#optionValue").value;
+        option.text = $("#optionText").value;
+        $("#optionValue").value = "";
+        $("#optionText").value = "";
+       clazz.appendChild(option);
+        alert("添加成功");
+
+    }
+    function remove(){
+        //获取下拉框的所有选项
+        var options = $("#clazz").options;
+        if(options!=null && options.length>0){
+            var option = options[options.length-1];
+            $("#clazz").removeChild(option);
+        }
+    }
+    //根据标识获取对应的元素
+    function $(eleInfo) {
+        var type = eleInfo.substr(0,1);//获取eleInfo内容，第一个字符
+        eleInfo = eleInfo.substr(1);//去掉第一个字符 后的eleInfo信息
+        //根据id获取元素
+        if(type =="#")
+        return document.getElementById(eleInfo);
+    }
+    function add(){
+        var option = new Option($("#optionText").value,$("#optionValue").value);
+        var clazz = $("#clazz");
+        //利用js 数组的长度是可变的特点
+        clazz.options[clazz.options.length] = option;
+
+    }
+    function remove(){
+        $("#clazz").options[$("#clazz").options.length-1] = null;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,331 @@
+--自定义函数
+--任务1：创建一个函数，根据输入的员工 id，具有输出某个员工的员工姓名的功能。，
+CREATE OR REPLACE FUNCTION getname_fun(
+       id emp.empno%type
+)
+RETURN VARCHAR2
+IS
+v_name emp.ename%type;
+BEGIN
+  SELECT ename INTO v_name FROM emp WHERE empno=id;
+RETURN v_name;
+END;
+--使用存储函数
+--第一种方式
+SELECT getName_fun(7369) FROM dual;
+--第二种方式
+DECLARE
+v_emp emp.ename%type;
+BEGIN
+  v_name:=getName_fun(7369);
+  dbms_output.put_line(v_name);
+  END;
+--创建一个函数add_dept，该函数具有添加部门信息的功能。
+CREATE OR REPLACE FUNCTION add_dept(v_dept dept%rowtype)
+RETURN BOOLEAN
+IS
+BEGIN
+  INSERT INTO dept VALUES(v_dept.deptno,v_dept.dname,v_dept.loc);
+  COMMIT;
+  RETURN TRUE;
+END;
+--调用函数
+DECLARE
+v_dept dept%rowtype;
+v_flag boolean;
+BEGIN
+  v_dept.deptno:=50;
+  v_dept.dname:='ff';
+  v_dept.loc:='GG';
+  v_flag:=add_dept(v_dept);
+  END;
+  SELECT * FROM dept;
+
+  --任务1： 创建一个函数，该函数具有通过部门编号获取部门名称的功能。
+CREATE OR REPLACE FUNCTION getdname_fun(
+       id emp.deptno%type
+)
+RETURN VARCHAR2
+IS
+v_dname dept.dname%type;
+BEGIN
+  SELECT dname INTO v_dname FROM dept WHERE deptno=id;
+RETURN v_dname;
+END;
+SELECT getDname_fun(50) FROM dual;
+SELECT * FROM dept;
+--任务2：创建一个名为get_sname()函数，该函数可以根据学生学号获取学生姓名（利用之前创建过的t_student表）
+CREATE OR REPLACE FUNCTION getsname_fun(
+       id t_student.sno%type
+)
+RETURN VARCHAR2
+IS
+v_sname t_student.sname%type;
+BEGIN
+  SELECT sname INTO v_sname FROM t_student WHERE sno=id;
+RETURN v_sname;
+END;
+SELECT getSname_fun('0059') FROM dual;
+SELECT * FROM t_student;
+
+
+-- 任务3：创建一个函数del_dept_func，该函数具有根据部门编号删除部门信息的功能。
+CREATE OR REPLACE FUNCTION del_dept_func(
+       id dept.deptno%type
+)
+RETURN BOOLEAN
+IS
+BEGIN
+
+  DELETE  FROM dept WHERE deptno=id;
+RETURN TRUE;
+END;
+
+DECLARE
+v_deptno dept%rowtype;
+v_flag boolean;
+BEGIN
+  v_flag:=del_dept_func(50);
+  END;
+  SELECT * FROM dept;
+
+--任务2：创建一个带有OUT参数的名为get_studentInfo_func函数，该函数可以根据学生学号和课程号获取学生姓名，
+--选修成绩。（利用之前创建过的t_student和t_scgrade表）
+CREATE OR REPLACE FUNCTION get_studentInfo_func(
+      v_sno in t_student.sno%type,
+      v_cno in t_scgrade.cno%type,
+      v_grade out t_scgrade.grade%type
+
+)
+RETURN VARCHAR2
+IS
+v_sname t_student.sname%type;
+BEGIN
+  SELECT  t1.sname,t2.grade INTO v_sname,v_grade FROM t_student t1,t_scgrade t2
+  WHERE t1.sno=t2.sno AND t1.sno=v_sno
+  AND t2.sno=v_sno;
+  RETURN v_sname;
+  END;
+--使用存储函数
+DECLARE
+v_sname t_student.sname%type;
+v_cgrade  t_scgrade.grade%type;
+BEGIN
+  v_sname:=get_studentInfo_func('adaa','1001');
+  v_grade:=get_studentInfo_func('adaa','1001');
+  dbms_output.put_line(v_sname||','||v_grade);
+  END;
+  SELECT * FROM t_scgrade;
+  --删除函数
+  DROP FUNCTION 函数名;
+  --案例1：SCOTT用户下创建一存储过程—查询雇员编号为7369的员工的入职时间，输出到控制台
+
+  CREATE OR REPLACE PROCEDURE getHir(v_empno in emp.empno%type,v_hiredate out emp.hiredate%type
+    IS
+  v_hiredate emp.hiredate%type;
+  BEGIN
+    SELECT e.hiredate FROM emp e WHERE e.empno=7369;
+    dbms_output.put_line('入职时间'||v_hiredate);
+  END;
+  --调用存储过程
+  DECLARE
+  v_hiredate emp.hiredate%type;
+  v_deptno emp.deptno%type;
+  BEGIN
+    getHir(7369,v_hiredate,v_daptno);
+
+    END;
+
+--带参数的储存过程
+CREATE OR REPLACE PROCEDURE getHir3(
+     v_empno in emp.empno%type,
+     v_hiredate out emp.hiredate%type,
+     v_deptno out emp.deptno%type
+)
+IS
+BEGIN
+  SELECT e.hiredate INTO v_hiredate FROM emp e WHERE e.empno='7369';
+  dbms_output.put_line('入职时间,部门号'||v_hiredate||','||v_deptno);
+END;
+----调用
+BEGIN
+  getHir;
+END;
+----调用带参存储过程
+DECLARE
+ v_hiredate emp.hiredate%type;
+ v_deptno emp.deptno%type;
+BEGIN
+  getHir3('7396',v_hiredate,v_deptno);
+END;
+
+    --任务1：HR用户下创建一存储过程—查询雇员编号为“100”的员工的入职时间，输出到控制台
+    SELECT * FROM employees;
+CREATE OR REPLACE PROCEDURE getHire_date(v_empno_id in employees.employee_id%type,v_hire_date out employees.hire_date%type)
+    IS
+  BEGIN
+    SELECT e.hire_date INTO v_hire_date FROM employees e WHERE e.employee_id=v_empno_id;
+    dbms_output.put_line('入职时间'||v_hire_date);
+  END;
+
+  DECLARE
+  v_hire_date employees.hire_date%type;
+
+  BEGIN
+    getHire_date('100',v_hire_date );
+    END;
+--任务2   在scott用户模式下创建一个存储过程查询员工工资最少的员工的入职时间
+CREATE OR REPLACE PROCEDURE getsal(v_minsal in emp.sal%type,
+     v_hiredate out emp.hiredate%type
+
+)IS
+BEGIN
+  SELECT e.hiredate INTO v_hiredate FROM emp e WHERE e.sal=v_minsal;
+  dbms_output.put_line('入职时间:'||v_hiredate);
+END;
+
+  DECLARE
+  v_hiredate emp.hiredate%type;
+ v_minsal  emp.sal%type;
+  BEGIN
+    SELECT min(sal) INTO v_minsal FROM emp;
+    getsal(v_minsal,v_hiredate );
+    END;
+
+
+--任务3  创建一个存储过程具有查询部门信息的功能
+CREATE OR REPLACE PROCEDURE get_depts_pro(
+       deptList out SYS_REFCURSOR
+)
+IS
+BEGIN
+  OPEN deptList FOR SELECT * FROM dept;
+  END get_depts_pro;
+--调用以上存储过程
+DECLARE
+v_deptList SYS_REFCURSOR;
+v_dept dept%rowtype;
+BEGIN
+  get_depts_pro(v_deptList);
+  LOOP
+    FETCH v_deptList INTO v_dept;
+    EXIT WHEN v_deptList%NOTFOUND;
+    dbms_output.put_line(v_dept.dname||','||v_dept.deptno||','||v_dept.loc);
+    END LOOP;
+    CLOSE v_deptList;
+    END;
+
+
+
+
+--程序包的声明
+--对部门的增删改查
+CREATE OR REPLACE PACKAGE dept_pkg
+IS
+--增加部门用存储函数
+FUNCTION add_dept_fun(v_dept dept%rowtype) RETURN BOOLEAN;
+--删除部门用存储函数
+FUNCTION del_dept_fun(v_deptno dept.deptno%type)
+  RETURN BOOLEAN;
+  --修改部门用存储函数
+PROCEDURE upd_dept_pro(v_deptno dept.deptno%type,v_dname dept.dname%type);
+--查询部门用存储函数
+PROCEDURE get_depts_pro;
+END dept_pkg;
+--程序包的主体
+CREATE OR REPLACE PACKAGE BODY dept_pkg
+IS
+--增加部门用存储函数
+FUNCTION add_dept_fun(v_dept dept%rowtype)
+  RETURN BOOLEAN
+  IS
+  BEGIN
+    INSERT INTO dept VALUES(v_dept.deptno,v_dept.dname,v_dept.loc);
+    COMMIT;
+    RETURN TRUE;
+  END add_dept_fun;
+  --删除部门用存储函数
+FUNCTION del_dept_fun(v_deptno dept.deptno%type)
+  RETURN BOOLEAN
+  IS
+  BEGIN
+    DELETE FROM dept WHERE deptno=v_deptno;
+    COMMIT;
+    RETURN TRUE;
+    END del_dept_fun;
+    --修改部门用存储函数
+PROCEDURE upd_dept_pro(v_deptno dept.deptno%type,v_dname dept.dname%type)
+IS
+BEGIN
+  UPDATE DEPT SET dname=v_dname WHERE deptno=v_deptno;
+  COMMIT;
+  END upd_dept_pro;
+  --查询部门用存储函数
+PROCEDURE get_depts_pro
+IS
+CURSOR dept_cursor IS SELECT *FROM dept;
+v_dept dept%rowtype;
+BEGIN
+  OPEN dept_cursor;
+  LOOP
+    FETCH dept_cursor INTO v_dept;
+    EXIT WHEN dept_cursor%NOTFOUND;
+    dbms_output.put_line(v_dept.deptno||','||v_dept.dname||','||v_dept.loc);
+    END LOOP;
+    CLOSE dept_cursor;
+  END get_depts_pro;
+  END dept_pkg;
+
+
+
+  ---调用程序包
+  DECLARE
+  v_dept dept%rowtype;
+  v_flag BOOLEAN;
+  BEGIN
+    v_dept.deptno:='11';
+    v_dept.dname:='人事部';
+    v_dept.loc:='address';
+    v_flag:=dept_pkg.add_dept_fun(v_dept);
+    END;
+SELECT * FROM dept;
+--调用程序包的删除
+DECLARE
+v_flag BOOLEAN;
+ BEGIN
+    v_flag:=dept_pkg.del_dept_fun(12);
+    END;
+--调用查询
+BEGIN
+   dept_pkg.get_depts_pro;
+END;
+--删除程序包
+DROP  PACKAGE dept_pkg;
+
+--根据部门的编号查询部门的信息
+CREATE OR REPLACE PACKAGE d_pkg
+IS
+PROCEDURE get_depts_pro(v_deptno dept.deptno%type);
+END d_pkg;
+--主体
+CREATE OR REPLACE PACKAGE BODY d_pkg
+IS
+PROCEDURE get_depts_pro(v_deptno dept.deptno%type)
+IS
+CURSOR dept_cursor IS SELECT *FROM dept WHERE deptno=v_deptno;
+v_dept dept%rowtype;
+BEGIN
+  OPEN dept_cursor;
+  LOOP
+    FETCH dept_cursor INTO v_dept;
+    EXIT WHEN dept_cursor%NOTFOUND;
+    dbms_output.put_line(v_dept.deptno||','||v_dept.dname||','||v_dept.loc);
+    END LOOP;
+    CLOSE dept_cursor;
+  END get_depts_pro;
+  END d_pkg;
+
+  --调用查询
+  BEGIN
+    d_pkg.get_depts_pro(20);
+    END;

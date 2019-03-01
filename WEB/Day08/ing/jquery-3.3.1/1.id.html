@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <div id="d1">这个是div1</div>
+    <div id="d2">这个是div2<a herf>>这是一个链接</a></div>
+<script type="text/javascript">
+    //获取第二个div的内容
+    //$("#d2"）得到的是jQuery的对象，不同于dom对象
+   /* alert($("#d2").html());
+    alert($("#d2").text());
+    $("#d3").html("<input>");//html有解析的功能
+    $("#d4").text("<input>");//text是纯文本*/
+    //jQuery对象和dom对象的转换
+    var jObj = $("#d2");
+    var jObj = $("#d2")[0];
+    alert(jObj.innerHTML);
+    var jObj2 = $(document.getElementById("d2"));
+    alert(jObj2.html());
+    //$(xx)[0]->dom对象 $(dom)对象—>Query对象
+</script>
+</body>
+</html>

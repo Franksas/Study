@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+  <!--   <table>
+         <tr>
+             <td>编号</td>
+             <td>姓名</td>
+             <td>性别</td>
+         </tr>
+         <tr>
+             <td>1</td>
+             <td>李白</td>
+             <td>男</td>
+         </tr>
+         <tr>
+             <td>2</td>
+             <td>杜甫</td>
+             <td>男</td>
+         </tr>
+         <tr>
+             <td>3</td>
+             <td>薛涛</td>
+             <td>女</td>
+         </tr>
+         <tr>
+             <td>4</td>
+             <td>李治</td>
+             <td>女</td>
+         </tr>
+     </table>-->
+  <table><tr><td>编号</td><td>姓名</td><td>性别</td></tr><tr><td>1</td><td>李白</td><td>男</td></tr><tr><td>2</td><td>杜甫</td><td>男</td></tr><tr><td>3</td><td>薛涛</td><td>女</td></tr><tr><td>4</td><td>李冶</td><td>女</td></tr></table>
+<script type="text/javascript">
+   var table = $("table")[0];
+    alert(table.lastChild.lastChild);
+   table.lastChild.lastChild.lastChild.style.backgroundColor = "red";
+   table.lastChild.lastChild.previousSibling.lastChild.style.backgroundColor = "red";
+    function $(eleInfo) {
+        var type = eleInfo.substr(0,1);//获取eleInfo内容，第一个字符
+
+        //根据id获取元素
+        if(type =="#") {
+            eleInfo = eleInfo.substr(1);//去掉第一个字符 后的eleInfo信息
+            return document.getElementById(eleInfo);
+        }else if(type=="."){
+
+        }else{
+            return document.getElementsByTagName(eleInfo);
+        }
+    }
+</script>
+</body>
+</html>

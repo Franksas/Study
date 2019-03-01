@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        table{
+            width: 300px;
+            border-collapse: collapse;
+        }
+        th,td{
+            border: 1px solid gray;
+        }
+        span{
+            color: red;//颜色值一种是6位，一种是3位,
+        }
+    </style>
+    <script type="text/javascript" src="jquery-3.3.1.min.js">
+
+    </script>
+</head>
+<body>
+<div>
+    <fieldset>
+        <legend>添加学生</legend>
+        <label>编号:</label>
+        <!--onblur为失去光标事件-->
+        <input type="text" id="id" name="id" onblur="checkId(this)">
+        <span></span>
+        <br>
+        <label>姓名:</label>
+        <input type="text" id="name" name="name" onblur="checkName(this)">
+        <span></span>
+    </fieldset>
+    <button>增加</button>
+    <button>删除</button>
+</div>
+    <table>
+        <thead>
+            <tr>
+                <th><input type="checkbox"> </th>
+                <th>编号</th>
+                <th>姓名</th>
+            </tr>
+        </thead>
+    </table>
+    <script type="text/javascript">
+       $("input[type= 'text']").each(function(){
+            var name = this.name;
+            //checkId(this)
+            var fnName = "check" +name.substr(0,1).toUpperCase()
+            + name.substr(1);
+            var fn = eval(fnName);
+            this.onclick=fn;
+        });
+
+        $("button:first").bind("click",function(){
+          //获取文本框的内容
+            var id = $("#id").val();
+            var name = $("#name").val();
+            var idFlag = checkId();
+            var nameFlag = checkName();
+            if(!idFlag ||!nameFlag){
+                return false;
+            }
+            var table = $("table");
+            /*var nodeStr = "<tr>" +
+             "<td><input type='checkbox'></td>"
+             + "<td>"+id+"</td>"
+             +"<td>"+name+"</td>"
+             + "</tr>";
+             var tr = table.append(nodeStr);*/
+            var tr = table[0].insertRow();
+            tr.insertCell(0).innerHTML="<input type='checkbox'>";
+            tr.insertCell(1).innerHTML = id;
+            tr.insertCell(2).innerHTML = name;
+            $("#id").val("");//.val()和.val("")前面是取值，后面是赋值
+            $("#name").val("");
+
+
+
+        });
+        $("button:last").bind("click",function(){
+           alert("remove");
+        });
+        function checkId(){
+            var ele = $("#id")[0];
+            if(/^\d{4}$/.test(ele.value)){
+                ele.nextElementSibling.innerHTML = "";
+                ele.style.backgroundColor = "white";
+                return true;
+            }else{
+                ele.nextElementSibling.innerHTML = "格式不合法，请重新输入";
+                ele.style.backgroundColor ="red";
+                return false;
+
+            }
+        }
+        function checkName(ele){
+            var ele = $("#name")[0];
+            if(/^\S{1,4}\S$/.test(ele.value)){
+                ele.nextElementSibling.innerHTML = "";
+                ele.style.backgroundColor = "white";
+                return true;
+            }else {
+                ele.nextElementSibling.innerHTML = "格式不合法，请重新输入";
+                ele.style.backgroundColor = "red";
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1322 @@
+JDK高级
+类加载器Classloader
+概念：类加载器是使得Java类可以被动态加载到Java虚拟机中并执行。
+Java虚拟机使用Java类的方式：Java源程序(.java文件)在经过Java编译器编译之后就被转换成Java字节码(.class文件)。
+类加载器是负责加载类的对象。ClassLoader类是一个抽象类。每个Class对象都包含一个对定义它的Classloader的引用。应用程序需要实现ClassLoaderd 的子类，以扩展Java虚拟机动态类的方式。
+数组类的Class对象不是由类加载器创建的，而是由Java运行时根据需要自动创建。数组类的类加载器由Class.getClassLoader()返回，该加载器与其元素类型的类加载器是相同的；如果该元素类型是基本类型，则该数组类没有类加载器。
+ClassLoader类使用委托模型来搜索类和资源。
+Java应用环境中不同的class分别由不同的ClassLoader负责加载。 一个JVM中默认的classloader有BootstrapClassLoader、Extension ClassLoader、AppClassLoader、CustomClassLoader,分别各司其职： BootstrapClassLoader
+负责加载java基础类，主要是%JRE_HOME/lib/目录下的rt.jar、resources.jar、charsets.jar和class等.
+ExtensionClassLoader
+负责加载java扩展类，主要是%JRE_HOME/lib/ext 目录下的jar和class
+
+AppClassLoader
+负责加载当前java应用的classpath中的所有类。
+Custom ClassLoader（自定义ClassLoader）
+由于一些特殊的需求，我们可能需要定制ClassLoader的加载行为，这时候就需要自定义ClassLoader了.自定义ClassLoader需要继承ClassLoader抽象类，重写findClass方法，这个方法定义了ClassLoader查找class的方式。
+主要可以扩展的方法有：
+findClass         定义查找Class的方式
+defineClass      将类文件字节码加载为jvm中的class
+findResource      定义查找资源的方式
+其中Bootstrap ClassLoader是JVM级别的，由C++撰写；ExtensionClassLoader、App ClassLoader都是java类，都继承自URLClassLoader超类。
+Bootstrap ClassLoader由JVM启动，然后初始化sun.misc.Launcher ，sun.misc.Launcher初始化ExtensionClassLoader、App ClassLoader。
+ClassLoader 中与加载类相关的方法
+    getParent()     返回该类加载器的父类加载器。
+    loadClass(String name)     加载名称为 name的类，返回的结果是 java.lang.Class类的实例。
+    findClass(String name)     查找名称为 name的类，返回的结果是 java.lang.Class类的实例。
+    findLoadedClass(String name)     查找名称为 name的已经被加载过的类，返回的结果是 java.lang.Class类的实例。
+    defineClass(String name, byte[] b, int off, int len)     把字节数组 b中的内容转换成 Java 类，返回的结果是 java.lang.Class类的实例。这个方法被声明为final的。
+    resolveClass(Class<?> c)     链接指定的 Java 类。
+为什么要使用双亲委托这种模型呢？
+  因为这样可以避免重复加载，当父类已经加载了该类的时候，就没有必要子类ClassLoader再加载一次。考虑到安全因素，我们试想一下，如果不使用这种委托模式，那我们就可以随时使用自定义的String来动态替代java核心api中定义的类型，这样会存在非常大的安全隐患，而双亲委托的方式，就可以避免这种情况，因为String已经在启动时就被引导类加载器（Bootstrcp ClassLoader）加载，所以用户自定义的ClassLoader永远也无法加载一个自己写的String，除非你改变JDK中ClassLoader搜索类的默认算法。
+既然JVM已经提供了默认的类加载器，为什么还要定义自已的类加载器呢？
+因为Java中提供的默认ClassLoader，只加载指定目录下的jar和class，如果我们想加载其它位置的类或jar时，比如：我要加载网络上的一个class文件，通过动态加载到内存之后，要调用这个类中的方法实现我的业务逻辑。在这样的情况下，默认的ClassLoader就不能满足我们的需求了，所以需要定义自己的ClassLoader。
+定义自已的类加载器分为两步：
+1、继承java.lang.ClassLoader
+2、重写父类的findClass方法 
+反射 Reflact
+概念：反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。
+一直以来反射技术都是Java中的闪亮点，这也是目前大部分框架(如Spring/Mybatis等)得以实现的支柱。在Java中，Class类与java.lang.reflect类库一起对反射技术进行了全力的支持。在反射包中，我们常用的类主要有Constructor类表示的是Class 对象所表示的类的构造方法，利用它可以在运行时动态创建对象、Field表示Class对象所表示的类的成员变量，通过它可以在运行时动态修改成员变量的属性值(包含private)、Method表示Class对象所表示的类的成员方法，通过它可以动态调用对象的方法(包含private)。
+注解 Annotation
+Java 注解用于为 Java 代码提供元数据。作为元数据，注解不直接影响你的代码执行，但也有一些类型的注解实际上可以用于这一目的。Java 注解是从 Java5 开始添加到 Java 的。
+注解的定义 注解通过 @interface 关键字进行定义。
+public @interface TestAnnotation { }
+它的形式跟接口很类似，不过前面多了一个 @ 符号。上面的代码就创建了一个名字为 TestAnnotaion 的注解。 你可以简单理解为创建了一张名字为 TestAnnotation 的标签。
+注解的应用 上面创建了一个注解，那么注解的的使用方法是什么呢。
+@TestAnnotation
+public class Test {
+}
+创建一个类 Test,然后在类定义的地方加上 @TestAnnotation 就可以用 TestAnnotation 注解这个类了。 你可以简单理解为将 TestAnnotation 这张标签贴到 Test 这个类上面。
+元注解是什么意思呢？ 
+元注解是可以注解到注解上的注解，或者说元注解是一种基本注解，但是它能够应用到其它的注解上面。
+元标签有 @Retention、@Documented、@Target、@Inherited、@Repeatable 5 种。
+@Retention 的英文意为保留期的意思。当 @Retention 应用到一个注解上的时候，它解释说明了这个注解的的存活时间。 它的取值如下：
+RetentionPolicy.SOURCE 注解只在源码阶段保留，在编译器进行编译时它将被丢弃忽视。
+RetentionPolicy.CLASS 注解只被保留到编译进行的时候，它并不会被加载到 JVM 中。
+RetentionPolicy.RUNTIME 注解可以保留到程序运行的时候，它会被加载进入到 JVM 中，所以在程序运行时可以获取到它们。
+@Documented 顾名思义，这个元注解肯定是和文档有关。它的作用是能够将注解中的元素包含到 Javadoc 中去。
+@Target
+Target 是目标的意思，@Target 指定了注解运用的地方。
+你可以这样理解，当一个注解被 @Target 注解时，这个注解就被限定了运用的场景。
+类比到标签，原本标签是你想张贴到哪个地方就到哪个地方，但是因为 @Target 的存在，它张贴的地方就非常具体了，比如只能张贴到方法上、类上、方法参数上等等。@Target 有下面的取值
+ElementType.ANNOTATION_TYPE 可以给一个注解进行注解
+ElementType.CONSTRUCTOR 可以给构造方法进行注解
+ElementType.FIELD 可以给属性进行注解
+ElementType.LOCAL_VARIABLE 可以给局部变量进行注解
+ElementType.METHOD 可以给方法进行注解
+ElementType.PACKAGE 可以给一个包进行注解
+ElementType.PARAMETER 可以给一个方法内的参数进行注解
+ElementType.TYPE 可以给一个类型进行注解，比如类、接口、枚举
+@Inherited
+Inherited 是继承的意思，但是它并不是说注解本身可以继承，而是说如果一个超类被 @Inherited 注解过的注解进行注解的话，那么如果它的子类没有被任何注解应用的话，那么这个子类就继承了超类的注解。 说的比较抽象。代码来解释。
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@interface Test {}
+@Test
+public class A {}
+public class B extends A {}
+注解 Test 被 @Inherited 修饰，之后类 A 被 Test 注解，类 B 继承 A,类 B 也拥有 Test 这个注解。
+@Repeatable 自然是可重复的意思。@Repeatable 是 Java 1.8 才加进来的，所以算是一个新的特性。
+举个例子，一个人他既是程序员又是产品经理,同时他还是个画家。 @interface Persons {
+  Person[]  value();
+} @Repeatable(Persons.class) @interface Person{
+  String role default "";
+} @Person(role="artist") @Person(role="coder") @Person(role="PM") public class SuperMan{
+}
+注意上面的代码，@Repeatable 注解了 Person。而 @Repeatable 后面括号中的类相当于一个容器注解。
+什么是容器注解呢？
+就是用来存放其它注解的地方。它本身也是一个注解。
+我们再看看代码中的相关容器注解。
+@interface Persons { Person[] value(); }
+按照规定，它里面必须要有一个 value 的属性，属性类型是一个被 @Repeatable 注解过的注解数组，注意它是数组。
+注解的属性
+注解的属性也叫做成员变量。注解只有成员变量，没有方法。注解的成员变量在注解的定义中以“无形参的方法”形式来声明，其方法名定义了该成员变量的名字，其返回值定义了该成员变量的类型。 @Target(ElementType.TYPE) @Retention(RetentionPolicy.RUNTIME) public @interface TestAnnotation {
+  int id();
+  String msg()
+} 
+上面代码定义了 TestAnnotation 这个注解中拥有 id 和 msg 两个属性。在使用的时候，我们应该给它们进行赋值。
+赋值的方式是在注解的括号内以 value=”” 形式，多个属性之前用 ，隔开。
+@TestAnnotation(id=3,msg="hello annotation")
+public class Test {
+}
+需要注意的是，在注解中定义属性时它的类型必须是 8 种基本数据类型外加 类、接口、注解及它们的数组。
+如果一个注解内仅仅只有一个名字为 value 的属性时，应用这个注解时可以直接接属性值填写到括号内。
+public @interface Check {
+    String value();
+}
+上面代码中，Check 这个注解只有 value 这个属性。所以可以这样应用。
+@Check("hi")
+int a;
+Java 预置的注解
+@Deprecated 这个元素是用来标记过时的元素，想必大家在日常开发中经常碰到。编译器在编译阶段遇到这个注解时会发出提醒警告，告诉开发者正在调用一个过时的元素比如过时的方法、过时的类、过时的成员变量。
+@Override 这个大家应该很熟悉了，提示子类要复写父类中被 @Override 修饰的方法
+@SuppressWarnings 阻止警告的意思。之前说过调用被 @Deprecated 注解的方法后，编译器会警告提醒，而有时候开发者会忽略这种警告，他们可以在调用的地方通过 @SuppressWarnings 达到目的。
+@SafeVarargs 参数安全类型注解。它的目的是提醒开发者不要用参数做一些不安全的操作,它的存在会阻止编译器产生 unchecked 这样的警告。它是在 Java 1.7 的版本中加入的。
+@FunctionalInterface 函数式接口注解，这个是 Java 1.8 版本引入的新特性。函数式编程很火，所以 Java 8 也及时添加了这个特性。
+注解与反射。 注解通过反射获取。首先可以通过 Class 对象的 isAnnotationPresent() 方法判断它是否应用了某个注解
+public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {}
+然后通过 getAnnotation() 方法来获取 Annotation 对象。
+ public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {}
+或者是 getAnnotations() 方法。 public Annotation[] getAnnotations() {}
+前一种方法返回指定类型的注解，后一种方法返回注解到这个元素上的所有注解。
+如果获取到的 Annotation 如果不为 null，则就可以调用它们的属性方法了。
+需要注意的是，如果一个注解要在运行时被成功提取，那么 @Retention(RetentionPolicy.RUNTIME) 是必须的。
+注解的使用场景 注解是一系列元数据，它提供数据用来解释程序代码，但是注解并非是所解释的代码本身的一部分。注解对于代码的运行效果没有直接影响。 注解有许多用处，主要如下：
+提供信息给编译器： 编译器可以利用注解来探测错误和警告信息
+编译阶段时的处理： 软件工具可以用来利用注解信息来生成代码、Html文档或者做其它相应处理。
+运行时的处理： 某些注解可以在程序运行的时候接受代码的提取
+注解应用的场景
+JUnit 测试
+ButterKnife是 Android 开发中大名鼎鼎的 IOC 框架，它减少了大量重复的代码
+Dagger2也是一个很有名的依赖注入框架。
+Retrofit 很牛逼的 Http 网络访问框架
+代理（jdk proxy、CGlib）
+动态代理
+使用动态代理的五大步骤
+1.通过实现InvocationHandler接口来自定义自己的InvocationHandler;
+2.通过Proxy.getProxyClass获得动态代理类
+3.通过反射机制获得代理类的构造方法，方法签名为getConstructor(InvocationHandler.class)
+4.通过构造函数获得代理对象并将自定义的InvocationHandler实例对象传为参数传入
+5.通过代理对象调用目标方法
+动态代理有以下特点:
+1、代理对象,不需要实现接口
+2、代理对象的生成,是利用JDK的API,动态的在内存中构建代理对象(需要我们指定创建代理对象/目标对象实现的接口的类型)
+3、动态代理也叫做:JDK代理,接口代理
+JDK中生成代理对象的API 代理类所在包:java.lang.reflect.Proxy JDK实现代理只需要使用newProxyInstance方法,但是该方法需要接收三个参数,完整的写法是：
+   static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces,InvocationHandler h )
+注意： 该方法是在Proxy类中是静态方法,且接收的三个参数依次为：
+ClassLoader loader：指定当前目标对象使用类加载器,获取加载器的方法是固定的
+Class<?>[] interfaces：目标对象实现的接口的类型,使用泛型方式确认类型
+InvocationHandler h：事件处理,执行目标对象的方法时,会触发事件处理器的方法,会把当前执行目标对象的方法作为参数传入
+总结:代理对象不需要实现接口,但是目标对象一定要实现接口,否则不能用动态代理。
+代理模式
+使用代理模式必须要让代理类和目标类实现相同的接口，客户端通过代理类来调用目标方法，代理类会将所有的方法调用分派到目标对象上反射执行，还可以在分派过程中添加"前置通知"和后置处理（如在调用目标方法前校验权限，在调用完目标方法后打印日志等）等功能。
+代理模式的适用，总结为：代理类主要负责为委托类预处理消息、过滤消息、把消息转发给委托类，以及事后处理消息等
+代理模式的用途，可以分为如下几种（From GOF）:
+(1)远程代理(Remote Proxy) ---A remote proxy provides a local representative for an object in a different address space.为远程对象提供一个本地的代理对象， 典型的例子如RMI， EJB，local bean 为remote 接口对象提供一个stub
+(2)虚拟代理(Virtual Proxy) – A virtual proxy creates expensive objects on demand.允许内存开销较大的对象在需要的时候创建。只有我们真正需要这个对象的时候才创建。
+(3)写入时复制代理(Copy-On-Write Proxy) – 用来控制对象的复制，方法是延迟对象的复制，直到客户真的需要为止。是虚拟代理的一个变体。
+(4)保护代理(Protection (Access)Proxy) – A protection proxy controls access to the original object. Protection proxies are useful when objects should have different access rights.为不同的客户提供不同级别的目标对象访问权限
+(5)缓存代理(Cache Proxy) – 为开销大的运算结果提供暂时存储，它允许多个客户共享结果，以减少计算或网络延迟。
+(6)防火墙代理(Firewall Proxy) – 控制网络资源的访问，保护主题免于恶意客户的侵害。
+(7)同步代理(SynchronizationProxy) –在多线程的情况下为主题提供安全的访问。
+(8)智能引用代理(Smart ReferenceProxy) - A smart reference is a replacement for a bare pointer that performs additional actions when an object is accessed。当一个对象被引用时，提供一些额外的操作，比如将对此对象调用的次数记录下来等。
+(9)复杂隐藏代理(Complexity HidingProxy) – 用来隐藏一个类的复杂集合的复杂度，并进行访问控制。有时候也称为外观代理(Fa?ade Proxy)，这不难理解。复杂隐藏代理和外观模式是不一样的，因为代理控制访问，而外观模式是不一样的，因为代理控制访问，而外观模式只提供另一组接口。
+按照代理创建的时期，可以分为动态代理和静态代理：
+静态代理：由程序员或者自动生成工具生成代理类，然后进行代理类的编译和运行。在代理类、委托类运行之前，代理类已经以.class的格式存在。
+静态代理：在程序运行时，由反射机制动态创建而成。
+CGlib代理
+静态代理和动态代理模式都是要求目标对象是实现一个接口的目标对象,但是有时候目标对象只是一个单独的对象,并没有实现任何的接口,这个时候就可以使用以目标对象子类的方式类实现代理,这种方法就叫做:CGlib代理。
+1、JDK的动态代理有一个限制,就是使用动态代理的对象必须实现一个或多个接口,如果想代理没有实现接口的类,就可以使用CGlib实现。
+2、CGlib是一个强大的高性能的代码生成包,它可以在运行期扩展java类与实现java接口.它广泛的被许多AOP的框架使用,例如Spring AOP和synaop,为他们提供方法的interception(拦截)。
+3、CGlib包的底层是通过使用一个小而快的字节码处理框架ASM来转换字节码并生成新的类.不鼓励直接使用ASM,因为它要求你必须对JVM内部结构包括class文件的格式和指令集都很熟悉。
+CGlib子类代理实现方法:
+1、需要引入cglib的jar文件,但是Spring的核心包中已经包括了Cglib功能,所以直接引入pring-core-3.2.5.jar即可。
+2、引入功能包后,就可以在内存中动态构建子类
+3、 代理的类不能为final,否则报错
+4、目标对象的方法如果为final/static,那么就不会被拦截,即不会执行目标对象额外的业务方法.代理,也叫作子类代理,它是在内存中构建一个子类对象从而实现对目标对象功能的扩展。
+在Spring的AOP编程中： 如果加入容器的目标对象有实现接口,用JDK代理 如果目标对象没有实现接口,用CGlib代理
+CGlib代理与JDK中的代理比较:
+JDK动态代理: 只能代理实现了接口的类 没有实现接口的类不能实现JDK动态代理。
+CGlib代理: 针对类来实现代理,对指定目标 产生一个子类 通过方法拦截技术拦截所有父类方法的调用。 我们要使用cglib代理必须引入 cglib的jar包
+jdk proxy和CGlib动态代理的原理区别：
+
+jdk动态代理:
+
+利用拦截器(拦截器必须实现InvocationHanlder)加上反射机制生成一个实现代理接口的匿名类，在调用具体方法前调用InvokeHandler来处理。
+
+CGlib动态代理:
+
+利用ASM开源包，对代理对象类的class文件加载进来，通过修改其字节码生成子类来处理。
+
+何时使用jdk proxy还是CGlib？
+
+1、如果目标对象实现了接口，默认情况下会采用jdk的动态代理实现AOP。
+
+2、如果目标对象实现了接口，可以强制使用CGlib实现AOP。
+
+3、如果目标对象没有实现了接口，必须采用CGlip库，Spring会自动在jdk动态代理和CGlib之间转换。
+
+如何强制使用CGlib实现AOP？
+
+1、添加CGlib库(aspectjrt-xxx.jar、aspectjweaver-xxx.jar、cglib-nodep-xxx.jar)
+
+2、在Spring配置文件中加入
+
+jdk动态代理和CGlib字节码生成的区别？
+
+1、jdk动态代理只能对实现了接口的类生成代理，而不能针对类。
+
+2、CGlib是针对类实现代理，主要是对指定的类生成一个子类，覆盖其中的方法，并覆盖其中方法实现增强，但是因为采用的是继承，所以该类或方法最好不要声明成final，对于final类或方法，是无法继承的。
+
+CGlib比JDK快？
+
+1、使用CGLib实现动态代理，CGLib底层采用ASM字节码生成框架，使用字节码技术生成代理类，在jdk6之前比使用Java反射效率要高。唯一需要注意的是，CGLib不能对声明为final的方法进行代理，因为CGLib原理是动态生成被代理类的子类。
+
+2、在jdk6、jdk7、jdk8逐步对JDK动态代理优化之后，在调用次数较少的情况下，JDK代理效率高于CGLIB代理效率，只有当进行大量调用的时候，jdk6和jdk7比CGLIB代理效率低一点，但是到jdk8的时候，jdk代理效率高于CGLIB代理，总之，每一次jdk版本升级，jdk代理效率都得到提升，而CGLIB代理消息确有点跟不上步伐。
+
+Spring如何选择用JDK还是CGLiB？
+
+1、当Bean实现接口时，Spring就会用JDK的动态代理。
+
+2、当Bean没有实现接口时，Spring使用CGlib是实现。
+
+3、可以强制使用CGlib（在spring配置中加入）。
+日志
+项目开发中，记录错误日志有以下好处：
+	1、方便调试
+	2、便于发现系统运行过程中的错误
+	3、存储业务数据，便于后期分析
+在java中，记录日志有很多种方式：
+	1、自己实现
+　　　　自己写类，将日志数据，以io操作方式，写数据到文本文件、数据库中。
+	2、使用log4j
+　　　　log4j可以将日志输出到console窗口、文本文件、数据库等，功能强大！
+	3、使用slfj
+　　　　slfj也是一个很强大的功能，slfj旨在一统天下，提供了logging.jar 和 log4j的接口，可以通过slfj来调用log4j，也可以调用jdk的logging。
+	4、使用jdk自带的logging.jar中的方法
+
+log4j
+定义：Log4j是Apache的一个开源项目，通过使用Log4j，我们可以控制日志信息输送的目的地是控制台、文件、GUI组件，甚至是套接口服务器、NT的事件记录器、UNIX Syslog守护进程等；我们也可以控制每一条日志的输出格式；通过定义每一条日志信息的级别，我们能够更加细致地控制日志的生成过程。最令人感兴趣的就是，这些可以通过一个配置文件来灵活地进行配置，而不需要修改应用的代码。
+下载apache-log4j-2.11.1-bin 将log4j-api-2.11.1.jar与log4j-core-2.11.1.jar压缩包放在Web Content->WEB-INF->lib里面
+级别： 在log4j2中， 共有8个级别，按照从低到高为：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF。
+All:最低等级的，用于打开所有日志记录.
+Trace:是追踪，就是程序推进一下.
+Debug:指出细粒度信息事件对调试应用程序是非常有帮助的.
+Info:消息在粗粒度级别上突出强调应用程序的运行过程.
+Warn:输出警告及warn以下级别的日志.
+Error:输出错误信息日志.
+Fatal:输出每个严重的错误事件将会导致应用程序的退出的日志.
+OFF:最高等级的，用于关闭所有日志记录.
+程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。
+配置文件
+1、根节点configuration下有两个子节点：appenders和loggers(可定义多个appender和logger了)
+2、appenders：定义输出，如定义的Console，是将日志输出到控制台，并对输出设置属性(通过PatternLayout设置输出格式)
+3、loggers：定义多个logger，且logger通过name进行区分，对不同的logger配置不同的输出可appender-ref引用配置的appender的name %d{yyyy-MM-dd HH:mm:ss, SSS} : 日志生产时间
+%p : 日志输出格式
+%c : logger的名称
+%m : 日志内容，即 logger.info("message")
+%n : 换行符
+%C : Java类名
+%L : 日志输出所在行数
+%M : 日志输出所在方法名
+hostName : 本地机器名
+hostAddress : 本地ip地址
+其中，Log4j提供的appender有以下几种
+org.apache.log4j.ConsoleAppender（控制台），  
+org.apache.log4j.FileAppender（文件），  
+org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件），  
+org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件），  
+org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）
+其中，Log4j提供的layout有以下几种 org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）
+slf4j
+定义：SLF4J，即简单日志门面（Simple Logging Facade for Java），不是具体的日志解决方案，它只服务于各种各样的日志系统。按照官方的说法，SLF4J是一个用于日志系统的简单Facade，允许最终用户在部署其应用时使用其所希望的日志System。实际上，SLF4J所提供的核心API是一些接口以及一个LoggerFactory的工厂类。
+SLF4J对比Log4J，logback和java.util.Logging的优势 在你的代码中使用SLF4J写日志语句的主要出发点是使得你的程序独立于任何特定的日志类库，依赖于特定类库可能需要使用不同于你已有的配置，并且导致更多维护的麻烦。除此之外，还有一个SLF4J API的特性是使得我坚持使用SLF4J而抛弃我长期间钟爱的Log4j的理由，是被称为占位符(place holder)，在代码中表示为“{}”的特性。占位符是一个非常类似于在String的format()方法中的%s，因为它会在运行时被某个提供的实际字符串所替换。这不仅降低了你代码中字符串连接次数，而且还节省了新建的String对象。通过使用SLF4J，你可以在运行时延迟字符串的建立，这意味着只有需要的String对象才被建立。而如果你已经使用log4j，那么你已经对于在if条件中使用debug语句这种变通方案十分熟悉了，但SLF4J的占位符就比这个好用得多。 这是你在Log4j中使用的方案，但这并不有趣，而且降低了代码可读性，因为它增加了不必要的繁琐重复代码(boiler-plate code)： if (logger.isDebugEnabled()) { logger.debug("Processing trade with id: " + id + " symbol: " + symbol); } 另一方面，如果你使用SLF4J的话，你可以得到更简洁格式的结果，就像以下展示的一样： logger.debug("Processing trade with id: {} and symbol : {} ", id, symbol);
+在SLF4J，我们不需要字符串连接而且不会导致暂时不需要的字符串消耗。取而代之，我们在一个以占位符和参数传递实际值构成的模板格式下写日志信息。你可能会在想万一我有很多个参数怎么办？嗯，那么你可以选择使用变量参数版本的日志方法或者以Object数组传递。这是一个相当方便和高效方法的打日志方法。记住，在生产最终日志信息字符串之前，这个方法会检查一个特定的日志级别是不是打开了，这不仅降低了内存消耗而且预先降低了CPU去处理字符串连接命令的时间。这里是使用SLF4J日志方法的代码，来自于slf4j-log4j12-1.6.1.jar中的Log4j的适配器类Log4jLoggerAdapter。
+public void debug(String format, Object arg1, Object arg2) {
+if (logger.isDebugEnabled()) {
+FormattingTuple ft = MessageFormatter.format(format, arg1, arg2); logger.log(FQCN, Level.DEBUG, ft.getMessage(), ft.getThrowable()); } }
+同时，我们应该知道打日志是对应用程序性能有着很大影响，在生产环节上我们建议只进行必要的日志记录。
+总结：我们使用slf4j来统一管理的我们的代码，我们不停的切换了多种日志框架来作为我们的日志输出，但是我们的业务代码，Java类中的那些日志输出代码一点都不用去改，这也真是slf4j最迷人的地方。它完美的整合了自己的一个简单日志，JDK自带的日志，log4j，logback，common-logging。
+
+5.	log4j
+5.1 简介
+Log4j由三个重要的组件构成：日志信息的优先级，日志信息的输出目的地，日志信息的输出格式。日志信息的优先级从高到低有ERROR、WARN、 INFO、DEBUG，分别用来指定这条日志信息的重要程度；日志信息的输出目的地指定了日志将打印到控制台还是文件中；而输出格式则控制了日志信息的显示内容。
+5.2 定义配置文件
+5.2.1配置根Logger，其语法为
+log4j.rootLogger = [ level ] , appenderName, appenderName, …
+lvel 是日志记录的优先级，分为OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL或者自定义的级别
+Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。
+5.2.2配置日志信息输出目的地Appender
+log4j.appender.appenderName = fully.qualified.name.of.appender.class  
+log4j.appender.appenderName.option1 = value1  
+…  
+log4j.appender.appenderName.option = valueN
+其中，Log4j提供的appender有以下几种
+org.apache.log4j.ConsoleAppender（控制台），  
+org.apache.log4j.FileAppender（文件），  
+org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件），  
+org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件），  
+org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）
+5.2.3配置日志信息的格式（布局）
+5.2.3.1语法
+log4j.appender.appenderName.layout = fully.qualified.name.of.layout.class  
+log4j.appender.appenderName.layout.option1 = value1  
+…  
+log4j.appender.appenderName.layout.option = valueN
+5.2.3.2其中，Log4j提供的layout有以下几种
+org.apache.log4j.HTMLLayout（以HTML表格形式布局），  
+org.apache.log4j.PatternLayout（可以灵活地指定布局模式），  
+org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），  
+org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）
+5.2.3.3  log4J采用类似C语言中的printf函数的打印格式格式化日志信息，打印参数如下： %m 输出代码中指定的消息
+%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL  
+%r 输出自应用启动到输出该log信息耗费的毫秒数  
+%c 输出所属的类目，通常就是所在类的全名  
+%t 输出产生该日志事件的线程名  
+%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”  
+%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921  
+%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：Testlog4.main(TestLog4.java:10)
+5.3在代码中使用Log4j
+5.3.1得到记录器
+使用Log4j，第一步就是获取日志记录器，这个记录器将负责控制日志信息。其语法为：
+public static Logger getLogger( String name)
+通过指定的名字获得记录器，如果必要的话，则为这个名字创建一个新的记录器。Name一般取本类的名字，比如：
+static Logger logger = Logger.getLogger ( ServerWithLog4j.class.getName () )
+5.3.2读取配置文件
+当获得了日志记录器之后，第二步将配置Log4j环境，其语法为：
+BasicConfigurator.configure ()： 自动快速地使用缺省Log4j环境。  
+PropertyConfigurator.configure ( String configFilename) ：读取使用Java的特性文件编写的配置文件。  
+DOMConfigurator.configure ( String filename ) ：读取XML形式的配置文件。
+5.3.33.插入记录信息
+Logger.debug ( Object message ) ;  
+Logger.info ( Object message ) ;  
+Logger.warn ( Object message ) ;  
+Logger.error ( Object message ) ;
+6.	SLF4J
+6.1简介
+SLF4J，即简单日志门面（Simple Logging Facade for Java），不是具体的日志解决方案，它只服务于各种各样的日志系统。
+实际上，SLF4J所提供的核心API是一些接口以及一个LoggerFactory的工厂类。
+6.2  SLF4J对比Log4J，logback和java.util.Logging的优势
+6.2.1
+在你的代码中使用SLF4J写日志语句的主要出发点是使得你的程序独立于任何特定的日志类库，依赖于特定类库可能需要使用不同于你已有的配置，并且导致更多维护的麻烦。除此之外，还有一个SLF4J API的特性是使得我坚持使用SLF4J而抛弃我长期间钟爱的Log4j的理由，是被称为占位符(place holder)，在代码中表示为“{}”的特性。占位符是一个非常类似于在String的format()方法中的%s，因为它会在运行时被某个提供的实际字符串所替换。这不仅降低了你代码中字符串连接次数，而且还节省了新建的String对象。通过使用SLF4J，你可以在运行时延迟字符串的建立，这意味着只有需要的String对象才被建立。而如果你已经使用log4j，那么你已经对于在if条件中使用debug语句这种变通方案十分熟悉了，但SLF4J的占位符就比这个好用得多。
+这是你在Log4j中使用的方案，但这并不有趣，而且降低了代码可读性，因为它增加了不必要的繁琐重复代码(boiler-plate code)：
+if (logger.isDebugEnabled()) { logger.debug("Processing trade with id: " + id + " symbol: " + symbol); }
+另一方面，如果你使用SLF4J的话，你可以得到更简洁格式的结果，就像以下展示的一样：
+logger.debug("Processing trade with id: {} and symbol : {} ", id, symbol);
+6.2.2
+在SLF4J，我们不需要字符串连接而且不会导致暂时不需要的字符串消耗。取而代之，我们在一个以占位符和参数传递实际值构成的模板格式下写日志信息。你可能会在想万一我有很多个参数怎么办？嗯，那么你可以选择使用变量参数版本的日志方法或者以Object数组传递。这是一个相当方便和高效方法的打日志方法。记住，在生产最终日志信息字符串之前，这个方法会检查一个特定的日志级别是不是打开了，这不仅降低了内存消耗而且预先降低了CPU去处理字符串连接命令的时间。这里是使用SLF4J日志方法的代码，来自于slf4j-log4j12-1.6.1.jar中的Log4j的适配器类Log4jLoggerAdapter。
+public void debug(String format, Object arg1, Object arg2) { 
+if (logger.isDebugEnabled()) { 
+FormattingTuple ft = MessageFormatter.format(format, arg1, arg2); logger.log(FQCN, Level.DEBUG, ft.getMessage(), ft.getThrowable()); } }
+同时，我们应该知道打日志是对应用程序性能有着很大影响，在生产环节上我们建议只进行必要的日志记录。
+6.3总结
+我们使用slf4j来统一管理的我们的代码，我们不停的切换了多种日志框架来作为我们的日志输出，但是我们的业务代码，Java类中的那些日志输出代码一点都不用去改，这也真是slf4j最迷人的地方。它完美的整合了自己的一个简单日志，JDK自带的日志，log4j，logback，common-logging。
+slf4j与其他日志框架集成
+slf4j-api(接口层) 
+   | 
+各日志实现包的连接层( slf4j-jdk14, slf4j-log4j) 
+   | 
+各日志实现包 
+slf4j与jdk-logging集成
+	所需的jar包： slf4j-api-1.7.25.jar  、slf4j-jdk14-1.7.12.jar
+slf4j与log4j集成
+	所需的jar包：slf4j-api-1.7.25.jar 、log4j.1.2.17.jar 、slf4j-log4j12-1.7.25.jar以及log4j的配置文件
+slf4j与logback集成
+	所需的jar包：logback-access-1.2.3.jar 、lagback-classic-1.2.3.jar(logback实现了slf4j的API) 、logback-core-1.2.3.jar(核心包) 、slf4j-api-1.7.25.jar以及logback的配置文件。
+
+logback同样是由log4j的作者设计完成的，拥有更好的特性，用来取代log4j的一个日志框架,是slf4j的原生实现(即直接实现了slf4j的接口，而log4j并没有直接实现，所以就需要一个适配器slf4j-log4j12.jar),logback一共有以下几个模块：
+
+logback-core：其它两个模块的基础模块
+logback-classic：它是log4j的一个改良版本，同时它完整实现了slf4j API使你可以很方便地更换成其它日志系统如log4j或JDK14 Logging
+logback-access：访问模块与Servlet容器集成提供通过Http来访问日志的功能
+同样，单独使用它时，需要引入以上jar,然后进行配置文件的配置，最后就是在相关类中进行使用，使用时加入以下语句:
+
+　　private final static Logger logger = LoggerFactory.getLogger(Test.class);
+
+ 　　logger.info("打印日志");
+
+log4j：log4j虽然声名显赫，但是在这里 首先要知道一点  slf4j 、log4j、logback 这三个框架都是同一个作者ceki 开发的，作者说 log4j 太烂，不想修改了，因此开发了 升级版的 log4j，也就是 logback ，因此在这里 我们划掉 log4j
+
+log4j2：log4j2不是log4j的升级版，而是apache开发的，log4j2 该框架很优秀，正是因为太优秀，设计时与 部分框架对其支持的程度有限，不一定会什么时候踩坑，而log4j2在设计时的性能是优于logback的，但是 99%的开发者不会有机会体会到这种差距，因为  logback也很优秀，足够我们日常开发，所以我们划掉 log4j2
+
+
+并发编程基础
+线程安全
+定义：当多个线程访问某个类时，不管运行时环境采用何种调度方式或者这些线程将如何交替执行，并且在主调代码中不需要任何额外的同步或协同，这个类都能表现出正确的行为，那么这个类就是线程安全的。正确性：某个类的行为与其规范相一致。
+在操作系统中，线程是不拥有资源的，进程是拥有资源的。而线程是由进程创建的，一个进程可以创建多个线程，这些线程共享着进程中的资源。所以，当线程一起并发运行时，同时对一个数据进行修改，就可能会造成数据的不一致性，所以多线程并发是不安全的。
+多线程并发不安全的原因已经知道，那么针对这个种情况，java中有两种解决思路：
+1.给共享的资源加把锁，保证每个资源变量每时每刻至多被一个线程占用。
+2.让线程也拥有资源，不用去共享进程中的资源。
+基于上面的两种思路，下面便是3种实施方案：
+多实例、或者是多副本（ThreadLocal）：对应着思路2，ThreadLocal可以为每个线程的维护一个私有的本地变量，可参考java线程副本–ThreadLocal；
+使用锁机制 synchronize、lock方式：为资源加锁。
+使用 java.util.concurrent 下面的类库：有JDK提供的线程安全的集合类
+当有多条线程同时访问共享数据时，如果不进行同步，就会发生错误，java提供了多种机制保证线程同步，这里主要说下synchronized和Lock;
+synchronized关键字
+最简单的方式是加入synchronized关键字，只要将操作共享数据的语句加入synchronized关键字，在某一时段只会让一个线程执行完，在执行过程中，其他线程不能进来执行 方法声明中同步（synchronized ）关键字。当它用来修饰一个方法或者一个代码块的时候，能够保证在同一时刻最多只有一个线程执行该段代码。遵循以下五条原则：
+一、当两个并发线程访问同一个对象object中的这个synchronized(this)同步代码块时，一个时间内只能有一个线程得到执行。另一个线程必须等待当前线程执行完这个代码块以后才能执行该代码块。
+二、然而，当一个线程访问object的一个synchronized(this)同步代码块时，另一个线程仍然可以访问该object中的非synchronized(this)同步代码块。
+三、尤其关键的是，当一个线程访问object的一个synchronized(this)同步代码块时，其他线程对object中所有其它synchronized(this)同步代码块的访问将被阻塞。
+四、当一个线程访问object的一个synchronized(this)同步代码块时，它就获得了这个object的对象锁。结果，其它线程对该object对象所有同步代码部分的访问都被暂时阻塞。
+五、以上规则对其它对象锁同样适用。
+使用锁 区别：
+a.Lock使用起来比较灵活，但需要手动释放和开启；采用synchronized不需要用户去手动释放锁， 当synchronized方法或者synchronized代码块执行完之后，系统会自动让线程释放对锁的占用；
+b.Lock不是Java语言内置的，synchronized是Java语言的关键字，因此是内置特性。Lock是一个类，通过这个类可以实现同步访问；
+c.在并发量比较小的情况下，使用synchronized是个不错的选择，但是在并发量比较高的情况下，其性能下降很严重，此时Lock是个不错的方案。
+d.使用Lock的时候，等待/通知 是使用的Condition对象的await()/signal()/signalAll() ，而使用synchronized的时候，则是对象的wait()/notify()/notifyAll();由此可以看出，使用Lock的时候，粒度更细了，一个Lock可以对应多个Condition。
+e.虽然Lock缺少了synchronized隐式获取释放锁的便捷性，但是却拥有了锁获取与是释放的可操作性、可中断的获取锁以及超时获取锁等多种synchronized所不具备的同步特性;
+多线程编程中的三个核心概念
+原子性 这一点，跟数据库事务的原子性概念差不多，即一个操作（有可能包含有多个子操作）要么全部执行（生效），要么全部都不执行（都不生效）。
+可见性 可见性是指，当多个线程并发访问共享变量时，一个线程对共享变量的修改，其它线程能够立即看到。
+顺序性 顺序性指的是，程序执行的顺序按照代码的先后顺序执行。但实际上JVM真正在执行这段代码时，并不保证它们一定完全按照此顺序执行。 处理器为了提高程序整体的执行效率，可能会对代码进行优化，其中的一项优化方式就是调整代码顺序，按照更高效的顺序执行代码。讲到这里，有人要着急了——什么，CPU不按照我的代码顺序执行代码，那怎么保证得到我们想要的效果呢？实际上，大家大可放心，CPU虽然并不保证完全按照代码顺序执行，但它会保证程序最终的执行结果和代码顺序执行时的结果一致。
+线程本地化 Threadlocal
+ThreadLocal很多地方叫做线程本地变量，也有些地方叫做本地线程变量，其实意思差不多。
+ThreadLocal和本地线程没有半毛钱关系，更不是一个特殊的Thread，它只是一个线程的局部变量(其实就是一个Map用于存储每一个线程的变量副本，Map中元素的Key为线程对象，而Value对应线程的变量副本),ThreadLocal会为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。
+对于多线程资源共享的问题，同步机制(Synchronized)采用了“以时间换空间”的方式，而ThreadLocal采用了“以空间换时间”的方式。前者仅提供一份变量，让不同的线程排队访问，而后者为每一个线程都提供了一份变量，因此可以同时访问而互不影响。
+官方对ThreadLocal的描述： 该类提供了线程局部（thread-local）变量。这些变量不同于他的普通对应物，因为访问某个变量（通过其get或set方法）的每个线程都有自己的局部变量，他独立于变量的初始化副本。ThreadLocal实例通常是类中的 private static字段，她希望将状态与某一个线程相关联。
+自己理解：
+1、每个线程都有自己的局部变量 每个线程都有一个独立于其他线程的上下文来保存这个变量，一个线程的本地变量对其他线程是不可见的。
+2、独立于变量的初始化副本 ThreadLocal可以给一个初始值，而每个线程都会获得这个初始化值的一个副本，这样才能保证不同的线程都有一份拷贝。
+3、状态与某一个线程相关联 ThreadLocal 不是用于解决共享变量的问题的，不是为了协调线程同步而存在，而是为了方便每个线程处理自己的状态而引入的一个机制。
+深入解析ThreadLocal类 先了解一下ThreadLocal类提供的几个方法：
+  public T get() { }
+  public void set(T value) { }
+  public void remove() { }
+  protected T initialValue() { }
+get()方法是用来获取ThreadLocal在当前线程中保存的变量副本；
+set()用来设置当前线程中变量的副本；
+remove()用来移除当前线程中变量的副本；
+initialValue()是一个protected方法，一般用来在使用时进行重写的，它是一个延迟加载方法；
+ThreadLocal是如何为每个线程创建变量的副本的：
+1、在每个线程Thread内部有一个ThreadLocal.ThreadLocalMap类型的成员变量threadLocals，这个threadLocals就是用来存储实际的变量副本的，Key为当前ThreadLocal变量，value为变量副本（即T类型的变量）。
+2、初始时，在Thread里面，threadLocals为空，当通过ThreadLocal变量调用get()方法或者set()方法，就会对Thread类中的threadLocals进行初始化，并且以当前ThreadLocal变量为键值，以ThreadLocal要保存的副本变量为value，存到threadLocals。
+3、在当前线程里面，如果要使用副本变量，就可以通过get方法在threadLocals里面查找。 ThreadLocal的应用场景 最常见的ThreadLocal使用场景为：用来解决数据库连接、Session管理，多线程单例模式访问； 订单处理包含一系列操作：减少库存量、增加一条流水台账、修改总账，这几个操作要在同一个事务中完成，通常也即同一个线程中进行处理，如果累加公司应收款的操作失败了，则应该把前面的操作回滚，否则，提交所有操作，这要求这些操作使用相同的数据库连接对象，而这些操作的代码分别位于不同的模块类中。 银行转账包含一系列操作： 把转出帐户的余额减少，把转入帐户的余额增加，这两个操作要在同一个事务中完成，它们必须使用相同的数据库连接对象，转入和转出操作的代码分别是两个不同的帐户对象的方法。
+ThreadLocal使用的一般步骤
+1、在多线程的类（如ThreadDemo类）中，创建一个ThreadLocal对象threadXxx，用来保存线程间需要隔离处理的对象xxx。
+2、在ThreadDemo类中，创建一个获取要隔离访问的数据的方法getXxx()，在方法中判断，若ThreadLocal对象为null时候，应该new()一个隔离访问类型的对象，并强制转换为要应用的类型。
+3、在ThreadDemo类的run()方法中，通过getXxx()方法获取要操作的数据，这样可以保证每个线程对应一个数据对象，在任何时刻都操作的是这个对象。
+Maven基础
+搭建私服
+什么是Maven？
+Maven这个词可以翻译为“知识的积累”，也可以翻译为“专家”或“内行”。Maven作为跨平台的项目管理工具，最重要的用途—->”服务于构建”，能够帮助我们自动化构建过程，从清理、编译、测试到生成报告、再到打包和部署。
+私服是架设在局域网的一种特殊的远程仓库，目的是代理远程仓库及部署第三方构件。有了私服之后，当 Maven 需要下载构件时，直接请求私服，私服上存在则下载到本地仓库；否则，私服请求外部的远程仓库，将构件下载到私服，再提供给本地仓库下载。
+我们可以使用专门的 Maven 仓库管理软件来搭建私服，比如：Apache Archiva，Artifactory，Sonatype Nexus。这里我们使用 Sonatype Nexus。
+Nexus的部署
+1、安装
+Nexus3.x是免安装的，下载nexus-3.10.0-04-win64压缩包，将其解压到任意目录。解压完后会出现两个文件夹："nexus-3.1.0-04"为Nexus3.x的安装文件目录，“sonatype-work”为Nexus3.x的工作(或称之为数据)目录。
+2、Nexus端口配置
+若想修改Nexus自带的Jetty容器的服务端口，需要修改“NEXUS_HOME\sonatype-work\nexus3\etc”目录下的“nexus.properties”配置文件，修改其中的端口即可。默认端口为：8081。
+3、运行Nexus 虽然在“NEXUX_HOME\nexus\nexus-3.1.0-04\bin”目录下存在nexus.exe的可执行程序，但是双击程序或者右键使用管理员运行，都不能启动Nexus的服务。正确的打开姿势是：通过命令行运行。
+执行步骤如下：
+- 1、Win+R，输入cmd回车，打开命令提示符窗口。
+- 2、一路cd命令，进入“NEXUX_HOME\nexus\nexus-3.1.0-04\bin”目录。
+- 3、输入 nexus,exe /run，回车即可运行。
+4、登录Nexus管理系统
+Nexus的默认服务端口为8081，默认的用户名是：admin，密码：admin123。点击右上角的Sign in按钮，输入用户名和密码，进入仓库管理系统。
+setting.xml 配置
+本地仓库存储位置配置
+<localRepository>D:\WorkSoft\repo</localRepository>
+服务器配置
+<servers>
+    <server>    
+        <id>nexus-releases</id>    
+        <username>admin</username>    
+        <password>admin123</password>    
+    </server>    
+    <server>    
+        <id>nexus-snapshots</id>    
+        <username>admin</username>    
+        <password>admin123</password>    
+    </server>    
+</servers>  
+镜像
+<mirrors>   
+    <mirror>   
+      <id>nexus-releases</id>   
+      <mirrorOf>*</mirrorOf>   
+      <url>http://localhost:8081/nexus/content/groups/public</url>   
+    </mirror>  
+    <mirror>   
+      <id>nexus-snapshots</id>   
+      <mirrorOf>*</mirrorOf>   
+      <url>http://localhost:8081/nexus/content/groups/public-snapshots</url>   
+    </mirror>   
+  </mirrors>
+配置
+nexus
+nexus-releases
+http://nexus-releases
+true
+true
+nexus-snapshots
+http://nexus-snapshots
+true
+true
+nexus-releases
+http://nexus-releases
+true
+true
+nexus-snapshots
+http://nexus-snapshots
+true
+true
+当前启用配置
+<activeProfiles>  
+      <activeProfile>nexus</activeProfile>  
+</activeProfiles>
+nexus插件仓库配置
+<pluginRepositories>
+   <pluginRepository>  
+        <id>nexus</id>  
+        <name>local private nexus</name>  
+       <url>http://192.168.33.107:8081/nexus/content/groups/public</url>  
+        <releases>
+           <enabled>true</enabled>
+         </releases>  
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>  
+   </pluginRepository>  
+</pluginRepositories>
+Maven的依赖
+Maven的依赖通过dependencis元素来配置依赖，这是Maven最强大的特性之一。它支持传递性依赖。 添加依赖 在Maven中需要使用在dependencies中定义一个或者多个dependency元素，来声明项目的一个或者多个依赖。 每个依赖元素dependency包括：
+  <>artifactId---依赖的坐标
+  <>classifier---用来帮助定义构件输出的一些附属附件
+  <>exclusions---用来排出的坐标
+  <>groupId---依赖的坐标
+  <>optionl---标记依赖是否可选
+  <>scope---依赖范围
+  <>systemPath---表示该依赖项在当前的绝对路径
+  <>type---依赖的类型，对应项目坐标定义的packaging
+  <>version---依赖的坐标
+依赖范围（sope）
+<dependency>
+    <!--
+    compile（默认）：编译范围的依赖，它在编译和打包的时候都会把该依赖打包进去
+    test：测试依赖范围，它在编译和打包的时候都不会把该依赖打包进去
+    provided：在编译和测试范围有效，最后生成war包时不会打包进去。
+    runtime：运行时依赖，编译的时候不依赖。
+    system：系统依赖范围
+    import：导入依赖范围
+     -->
+    <scope></scope>
+</dependency>
+依赖的传递性
+在Maven中一个依赖不仅仅是一个JAR。它是一个POM文件，这个POM可能也声明了对其它构件的依赖。这些依赖的依赖叫做传递性依赖 。
+所谓传递性依赖就是： 如果项目A依赖于项目B，项目B自身依赖于项目C，那么项目A它也依赖于项目C的依赖。
+这种依赖是基于compile这个范围进行依赖
+依赖版本的界限 在依赖某个项目的时候，你可以不必指定特定的某个版本。也可以指定一个版本范围 (,) 不包含 [,] 包含 例如：依赖一个Junit的大于等于3.8 但是小于4.0 的版本
+  <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>[3.8,4.0)</version>
+  </dependency>
+Apache commons
+Commons BeanUtils
+Apache Commons是一个Apache项目，专注于可重用Java组件的所有方面。
+Apache Commons项目由三部分组成：
+   Commons Proper - 可重用Java组件的存储库。
+   Commons Sandbox - 用于Java组件开发的工作区。
+   Commons Dormant - 当前不活动的组件库。
+   BeanUtils是Apache Commons组件的成员之一，
+主要用于简化JavaBean封装数据的操作。
+简化反射封装参数的步骤，给对象封装参数。
+好处： BeanUtils给对象封装参数的时候会进行类型自动转换。
+BeanUtils工具由Apache软件基金组织编写，提供给我们使用，主要解决的问题是：把对象的属性数据封装到对象中。在整个J2EE的编程过程中，我们经常会从各种配置文件中读取相应的数据，需要明白的一点是从配置文件中读取到的数据都是String，但是很显然我们的应用程序中不仅仅有String一种数据类型，比如：基本数据类型（int、double、char、float等），还有自定义数据类型（引用数据类型），那么我们必须面临的一个问题就是讲字符串类型转换为各种具体的数据类型，该怎么办呢？有两种方法供我们是使用：
+1、首先判断需要的数据类型，然后对字符串类型调用相应的方法，将其转换为我们想要的类型
+2、使用BeanUtils工具
+对于上面提到的两种方法，我们分析第一种存在的问题是太过于繁琐，每次都要进行大量的类型转换，Apache软件基金会给我们提供了第二种方法，使用其提供的BeanUtils工具，具体的说只需要知道其中的两个方法就能实现类型的转换，很简单，降低了编程的难度。
+ 注意：如果想自动封装数据，表单form中元素的name需要与JavaBean中的属性一致。
+BeanUtils一共分4个包：
+  	org.apache.commons.beanutils
+  	org.apache.commons.beanutils.converters
+  	org.apache.commons.beanutils.locale
+  	org.apache.commons.beanutils.locale.converters
+	其中上面两个是BeanUtils的默认实现，它没有针对本地化的任何处理，这个可以提高执行效率。但是若你的程序对于本地化有要求的话，那还是使用下面2个包比较安全。
+   	org.apache.commons.beanutils这个包主要提供用于操作JavaBean的工具类，Jakarta-Common-BeanUtils的主要功能都在这个包里实现。
+ BeanUtils的应用场景
+  1. 快速将一个JavaBean各个属性的值，赋值给具有相同结构的另一个JavaBean中。
+  2. 快速收集表单中的所有数据到JavaBean中。
+BeanUtils的基本使用：导入相关JAR包，在当前目录下，创建一个目录lib，将jarr包复制到lib目录中。
+- BeanUtils常用方法
+      1. public static void setProperty(Object bean, String name, Object value)
+      给指定对象bean的指定name属性赋值为指定值value。
+      //如果指定的属性不存在，则什么也不发生。
+      2.public static String getProperty(Object bean, String name)
+      获取指定对象bean指定name属性的值。
+      //如果指定的属性不存在，则会抛出异常。
+      注意：当属性的类型是数组类型时，获取到的值数组中的第一个值。
+      3.public static void copyProperties(Object dest, Object orig)    
+      将对象orig的属性值赋值给对象dest对象对应的属性
+      注意：只有属性名名相同且类型一致的才会赋值成功。
+      4. public static void populate(Object bean, Map<String, ? extends Object>
+      properties)
+      将一个Map集合中的数据封装到指定对象bean中
+      注意：对象bean的属性名和Map集合中键要相同。
+Commons Betwixt
+	Betwixt是Apache Commons家族中又一重要的成员，它可以很容易地将一个XML的内容转化为一个JavaBean，这一点与Digester倒很相似，但它同时也可以很容易地将一个JavaBean转化为XML格式的内容。
+	Commons Betwixt这个组件提供了一个XML自省(introspection)机制用来把Java Bean映射成XML信息（.xml文件或符合xml格式的字符串，下同）或者把XML信息映射成Java Bean。
+Commons Collections
+Commons Collections，又是一个重量级的东西，为Java标准的Collections API提供了相当好的补充。
+ 包的结构
+      org.apache.commons.collections – CommonsCollections自定义的一组公用接口和工具类
+      org.apache.commons.collections.bag – 实现Bag接口的一组类
+      org.apache.commons.collections.bidimap – 实现BidiMap系列接口的一组类
+      org.apache.commons.collections.buffer – 实现Buffer接口的一组类
+      org.apache.commons.collections.collection –实现java.util.Collection接口的一组类
+      org.apache.commons.collections.comparators– 实现java.util.Comparator接口的一组类
+      org.apache.commons.collections.functors –Commons Collections自定义的一组功能类
+      org.apache.commons.collections.iterators – 实现java.util.Iterator接口的一组类
+      org.apache.commons.collections.keyvalue – 实现集合和键/值映射相关的一组类
+      org.apache.commons.collections.list – 实现java.util.List接口的一组类
+      org.apache.commons.collections.map – 实现Map系列接口的一组类
+      org.apache.commons.collections.set – 实现Set系列接口的一组类
+  Bag--在org.apache.commons.collections包中定义的接口，它extends java.util.Collection，而它的实现类都被放在下面的bag包中。HashBag是Bag接口的一个标准实现。而BagUtils提供一组static的方法让调用者获取经过不同装饰后的Bag实例。
+  Buffer--定义在org.apache.commons.collections包下面的接口，用于表示按一定顺序除去成员对象的collection如队列等。具体的实现类在org.apache.commons.collections.buffer 包下可以找到。最简单直接的Buffer实现类是UnboundedFifoBuffer，提供先进先出的大小可变的队列。而BoundedFifoBuffer则是对其大小进行了限制，是固定大小的先进先出队列。BlockingBuffer要在多线程的环境中才能体现出它的价值，尤其是当我们需要实现某种流水线时这个BlockingBuffer很有用：每个流水线上的组件从上游的BlockingBuffer获取数据，处理后放到下一个BlockingBuffer中依次传递。BlockingBuffer的核心特色通俗点说就是如果你向它要东西，而它暂时还没有的话，你可以一直等待直至拿到为止。PriorityBuffer则提供比一般的先进先出Buffer更强的控制力：我们可以自定义Comparator给它，告诉它怎么判定它的成员的先后顺序，优先级最高的最先走。此外还有执行类型检查的TypedBuffer、或者不可改变的UnmodifiableBuffer等等。
+ Map -- 在java.util.Map的基础上扩展的接口和类。BidiMap，直译就是双向Map，可以通过key找到value，也可以通过value找到key，这在我们日常的代码-名称匹配的时候很方便：因为我们除了需要通过代码找到名称之外，往往也需要处理用户输入的名称，然后获取其代码。需要注意的是BidiMap当中不光key不能重复，value也不可以。MultiMap，就是说一个key不在是简单的指向一个对象，而是一组对象，add()和remove()的时候跟普通的Map无异，只是在get()时返回一个Collection，利用MultiMap，我们就可以很方便的往一个key上放数量不定的对象，也就实现了一对多。LazyMap，意思就是这个Map中的键/值对一开始并不存在，当被调用到时才创建。
+ Collection -- 用也各collection之间的类型转换。典型的是TypedCollection，它实际上的作用就是提供一个decorate方法，我们传进去一个Collection和需要的类型甄别信息java.lang.Class，它给我们创建一个全新的强类型的Collection。
+ Comparator--提供了一些Comparator的实现类（都在org.apache.commons.collections.comparators包下面）BooleanComparator – 用于排序一组Boolean对象，指明先true还是先false；ComparableComparator   
+ 用于排序实现了java.lang.Comparable接口的对象（我们常用的Java类如String、Integer、Date、Double、File、Character等等都实现了Comparable接口）；ComparatorChain – 定义一组Comparator链，链中的Comparator对象会被依次执行；FixedOrderComparator – 用于定义一个特殊的顺序，对一组对象按照这样的自定义顺序进行排序；NullComparator – 让null值也可参与比较，可以设定为先null或者后null；ReverseComparator – 将原有的Comparator效果反转；TransformingComparator – 将一个Comparator装饰为具有Transformer效果的Comparator。
+ Predicate -- 它以一个Object对象为参数，处理后返回一个boolean值，检验某个对象是否满足某个条件。Commons Collections也提供了一组定义好的Predicate类供我们使用，这些类都放在org.apache.commons.collections.functors包中。当然，我们也可以自定义Predicate，只要实现这个Predicate接口即可。
+Transformer -- 我们有时候需要将某个对象转换成另一个对象供另一组方法调用，而这两类对象的类型有可能并不是出于同一个继承体系的，或者说出了很基本的Object之外没有共同的父类，或者我们根本不关心他们是不是有其他继承关系，甚至就是同一个类的实例只是对我们而言无所谓，我们为了它能够被后续的调用者有意义的识别和处理，在这样的情形，我们就可以利用Transformer。除了基本的转型Transformer之外，Commons Collections还提供了Transformer链和带条件的Transformer，使得我们很方便的组装出有意义的转型逻辑。
+ Closure -- 这一组接口和类提供一个操作对象的execute方法，为我们在处理一系列对象时可以将处理逻辑分离出来。ChainedClosure可以包装一组Closure作为整体执行；IfClosure在创建时需要提供给它一个Predicate和两个Closure，执行时先做Predicate判定再决定执行哪一个Closure；SwitchClosure跟SwitchTransformer类似，根据创建时传入的Predicate组和Closure组对应执行；WhileClosure则根据创建时传入的Predicate做判断，如果为true则执行Closure，直到Predicate返回false；等等。
+  Iterator -- java.util.Iterator接口定义了标准的Collection遍历方法，但是如果不做改变的使用它，我们得到的是从头到尾一次性的遍历。假如我们需要循环遍历，假如我们需要遍历某一段，假如我们需要遍历满足某些条件的元素，等等等等，我们就不能完全依赖于这个Iterator的标准实现了。除非我们宁可在此基础上在调用的代码中多加一些判断，不过这样的话代码就会显得混乱，时间长了就容易变得难以维护。Commons Collections的这一组Iterator为我们带来了便利。
+Commons io
+	Commons-io是一款处理io流的工具，封装了很多处理io流和文件的方法，可以大大简化我们处理io流和操作文件的代码。从common-io的官方使用文档可以看出，它主要分为工具类、尾端类、行迭代器、文件过滤器、文件比较器和扩展流。
+Commons IO是一个帮助开发IO功能的实用程序库。
+主要包括六个方面：
+1.实用程序类 - 使用静态方法执行常见任务
+2.输入 - 有用的输入流和读取器实现
+3.输出 - 有用的输出流和写入器实现
+4.过滤器 - 文件过滤器的各种实现
+5.比较器 - 用于文件的java.util.Comparator的各种实现
+6.文件监视器 - 用于监视文件系统事件的组件
+Commons-IO包含 实用程序类， endian类， 行迭代器， 文件过滤器， 文件比较器和 流实现。
+工具类
+IOUtils包含了用来处理读、写、复制的工具方法。这些方法基于 InputStream，OutputStream ， Reader ， Writer运行。 例：一个从URL读取字节并将其打印的任务，典型的实现代码如下：
+InputStream in  = new URL("http://commons.apache.org").openStream();
+try{
+     InputStreamReader inR = new InputStreamReader(in);
+     BufferedReader buf = new BufferedReader(inR);
+     String line;
+      while( ( line = buf.readLine() ) != null ){
+                System.out.println( line );
+       } 
+}finally{
+        in.close();
+}
+而通过IOUtils类，实现如下：
+InputStream in = new URL( "http://commons.apache.org" ).openStream();
+try{
+      System.out.println( IOUtils.toString( in ) ); 
+}finally{
+      IOUtils.closeQuietly( in );
+}
+FileUtils 包含了与File对象一起工作的工具方法。这些方法包括读、写、复制、比较文件。 比如，一行一行的读取整个文件你可能会这样实现：
+File = new File("/commons/io/project.properties");
+List lines = FileUtils.readLines(file,"UTF-8");
+FilenameUtils 包含了不使用File对象操作文件名的工具类方法。这个类的主旨是使Unix和Windows一致，为了帮助这些环境之间的过渡（比如说开发环境和生产环境）。 比如为了规范化的去除两个点的路径：
+String filename = "C:/commons/io/../lang/project.xml";
+String normalized = FilenameUtils.normalize(filename);    //结果是  "C:/commons/lang/project.xml"
+FileSystemUtils 包含了一系列不被jdk支持的操作文件系统的工具方法。现在，唯一的方法是用来获取磁盘剩余空间。注意这使用的是命令行而不是native代码。
+例：long freeSpace = FileSystemUtils.freeSpace("C:/");
+Endian classes 不同的计算机架构包含了不同的byte ordering的习惯。在被称作“Little Endian”的架构（比如Intel）上，low-order byte被存储在内存的最低地址，并且随后的字节在高位地址。对于“Big Endian”架构，情况恰好相反。
+这个包中有两个类与之相关：
+EndianUtils 类包含了用于交换Java primitives和streams的Endian-ness的静态方法。
+SwappedDataInputStream 类是一个DataInput接口的实现，通过这个类，用户可以读取文件数据而不需理会Endian-ness。
+Line iterator org.apache.commons.io.LineIterator类提供了一种弹性的方式来操作line-based的文件。LineIterator的实例可以通过FileUtils或者IOUtils的钢厂方法直接创建。
+推荐的使用方式是：
+LineIterator it = FileUtils.lineIterator(file,"UTF-8");
+try{
+     while( it.hasNext() ){
+     String line = it.nextLine();    //do something with line
+}
+}finally{
+      LineIterator.closeQuietly(it);
+}
+File filters 包org.apache.commons.io.filefilter定义了一个接口IOFileFilter 合并了java.io.FileFilter和java.io.FilenameFilter。并且这个包提供了一系列随时取用的IOFileFilter的实现。这些实现允许你合并其他类似的过滤器。 比如，这些过滤器可以用来list files或者FileDialog
+File comparators 包org.apache.commons.io.comparator为java.io.File提供了java.util.Comparator的一些实现。 比如这些比较器可以被用来给文件列表排序。
+Streams 包org.apache.commons.io.input和org.apache.commons.io.output packages包含了各种有用的流的实现。内容如下：
+Null output stream - 会静默的接收发送给它的数据
+Tee output stream - 发送output数据给两个流而不是一个
+Byte array output stream - 这是一个比JDK类更快的版本
+Counting streams - 查出经过的字节数
+Proxy streams - proxy中的正确方法的delegate
+Lockable writer - 使用锁文件提供同步写操作
+Commons lang
+Apache Commons lang包提供了标准Java库函数里没有提供的Java核心类的操作方法。Apache Commons Lang为java.lang API提供了大量的辅助工具，尤其是在String操作方法。
+StringUtils
+如何判断字符串为空的情况？
+String a=null；
+if(a!=null && a!=""){}
+需要判断的地方有很多，代码累赘
+StringUtils ： 该类主要提供对字符串的操作,对null是安全的,主要提供了字符串查找,替换,分割,去空白,去掉非法字符等等操作 // 1.public static boolean isEmpty(String str) // 判断某字符串是否为空，为空的标准是str == null 或 str.length() == 0 // 下面是示例：
+System.out.println(StringUtils.isEmpty(null));// true
+System.out.println(StringUtils.isEmpty(""));// true
+System.out.println(StringUtils.isEmpty(" "));// false
+System.out.println(StringUtils.isEmpty("        "));// false
+System.out.println(StringUtils.isEmpty("bob"));// false
+System.out.println(StringUtils.isEmpty(" bob "));// false
+// 2.public static boolean isNotEmpty(String str)
+//判断某字符串是否非空，等于!isEmpty(String str)
+//下面是示例：
+System.out.println(StringUtils.isNotEmpty(null));// false
+System.out.println(StringUtils.isNotEmpty(""));// false
+System.out.println(StringUtils.isNotEmpty(" "));// true
+System.out.println(StringUtils.isNotEmpty("         "));// true
+System.out.println(StringUtils.isNotEmpty("bob"));// true
+System.out.println(StringUtils.isNotEmpty(" bob "));// true
+//3. public static boolean isBlank(String str)
+//判断某字符串是否为空或长度为0或由空白符(whitespace)构成
+///下面是示例：
+StringUtils.isBlank(null);// true
+StringUtils.isBlank("");// true
+StringUtils.isBlank(" ");// true
+StringUtils.isBlank("        ");// true
+System.out.println(StringUtils.isBlank("\t \n \f \r"));// true
+System.out.println(StringUtils.isBlank("\b"));// false
+System.out.println(StringUtils.isBlank(" bob "));// false
+//4. public static boolean isNotBlank(String str)
+//判断某字符串是否不为空且长度不为0且不由空白符(whitespace)构成，
+//等于!isBlank(String str)
+// 下面是示例：
+System.out.println(StringUtils.isNotBlank(null));       // false
+System.out.println(StringUtils.isNotBlank(""));               // false
+System.out.println(StringUtils.isNotBlank(" "));          // false
+System.out.println(StringUtils.isNotBlank("         "));        //false
+System.out.println(StringUtils.isNotBlank("\t \n \f \r"));     // false
+System.out.println(StringUtils.isNotBlank("\b"));              // true
+System.out.println(StringUtils.isNotBlank("bob"));           // true
+System.out.println(StringUtils.isNotBlank(" bob "));   // true
+//5. public static String trim(String str)
+//去掉字符串两端的控制符(control characters, char <= 32)
+//如果输入为null则返回null
+//下面是示例：
+System.out.println(StringUtils.trim(null));                // null
+System.out.println(StringUtils.trim(""));                 // ""
+System.out.println(StringUtils.trim(" "));                          // ""
+System.out.println(StringUtils.trim("     \b \t \n \f \r    ")); // ""
+System.out.println(StringUtils.trim("     \n\tss   \b"));       // "ss"
+System.out.println(StringUtils.trim(" d   dd     "));     // "d   dd"
+System.out.println(StringUtils.trim("dd     "));            // "dd"
+System.out.println(StringUtils.trim("     dd       "));           // "dd"
+//6.public static String trimToNull(String str)
+//去掉字符串两端的控制符
+//如果变为null或""，则返回null
+//下面是示例：
+StringUtils.trimToNull(null);                // null
+StringUtils.trimToNull("");                           // null
+StringUtils.trimToNull(" ");                          // null
+StringUtils.trimToNull("     \b \t \n \f \r    "); // null
+StringUtils.trimToNull("     \n\tss   \b");     // "ss"
+StringUtils.trimToNull(" d   dd     ");        // "d   dd"
+StringUtils.trimToNull("dd     ");           // "dd"
+StringUtils.trimToNull("     dd       ");          // "dd"
+  System.out.println(StringUtils.contains("defg", "ef"));//检查一字符串是否包含另一字符串.
+  System.out.println(StringUtils.containsOnly("ef", "defg"));//检查一字符串是否为另一字符串的子集
+  System.out.println("去除字符中的空格.");
+  System.out.println(StringUtils.deleteWhitespace("aa  bb  cc"));//aabbcc
+  System.out.println("分隔符处理成数组.");
+  String[] strArray = StringUtils.split("a,b,,c,d,null,e", ",");
+  System.out.println(strArray.length);//6
+  System.out.println("缩短到某长度,用...结尾.");
+  System.out.println(StringUtils.abbreviate("The quick brown fox jumps over the lazy dog.", 10));//The qui...
+  System.out.println(StringUtils.abbreviate("The quick brown fox jumps over the lazy dog.", 15, 10));//... fox...
+ArrayUtils 提供了数组的复制,查找,获取子数组,反转等功
+//判断数组是否为空(null和length=0的时候都为空)
+ArrayUtils.isEmpty(new int[0]);// true
+ArrayUtils.isEmpty(new Object[] { null });// false
+//合并两个数组
+ArrayUtils.addAll(new int[] { 1, 3, 5 }, new int[] { 2, 4 });// {1,3,5,2,4}
+//删除数组中某个位置上的数据
+        ArrayUtils.remove(new int[] { 1, 3, 5 }, 1);// {1,5}
+// 删除数组中某个对象(从正序开始搜索,删除第一个)
+ArrayUtils.removeElement(new int[] { 1, 3, 5 }, 3);// {1,5}
+//Null处理,如果输入的两个数组都为null时候则返回true
+ArrayUtils.isEquals(new int[] { 1, 2, 3 }, null);// false
+ArrayUtils.isEquals(null, null);// true
+//查询某个Object是否在数组中
+ArrayUtils.contains(new int[] { 3, 1, 2 }, 1);// true
+//输出数组中的元素内容
+ArrayUtils.toString(new int[] { 1, 4, 2, 3 });// {1,4,2,3}
+ArrayUtils.toString(new Integer[] { 1, 4, 2, 3 });// {1,4,2,3}
+ArrayUtils.toString(null, "I'm nothing!");// I'm nothing!
+DateUtils和DateFormatUtils
+DateUtils 主要提供了对日期的操作,包括日期加减,日期格式化,日期比较等。它们在org.apache.commons.lang.time包下。
+1.与SUN的SimpleDateFormat相比 ，其主要优点是：线程安全。
+2.对应于SimpleDateFormat的format()的方法，是DateFormatUtils 的format系列方法，常用的就是：
+public static String format(Date, String pattern)
+3.对应与SimpleDateFormat的parse()的方法，是DateUtils的parseDate方法，即：
+public static Date parseDate(String dateValue) throws DateParseException
+4.日期舍入与截整，DateUtils的truncate()方法可以将日期按照任意范围截整，关键看第二个参数。
+public static Date truncate(Date, int field)
+第二个参数取自Calendar的常量，可以是MONTH、DATE、HOUR等多种；
+5.判断是否是同一天，DateUtils的isSameDay()方法 public static boolean isSameDay(Date date1, Date date2)
+6.DateFormatUtils定义了很多内置的固定日期格式，均为FastDateFormat类型，比如 ISO_DATE_FORMAT。使用 FastDateFormat的format()方法可以直接将日期格式化为内置的固定格式。
+public String format(Date date)。
+//常用日期格式的格式化操作：
+//以 yyyy-MM-dd 格式化:
+System.out.println(DateFormatUtils.ISO_DATE_FORMAT.format(new Date()));//2017-06-17
+//以 yyyy-MM-dd'T'HH:mm:ss 格式化:
+System.out.println(DateFormatUtils.ISO_DATETIME_FORMAT.format(new Date()));//2017-06-17T12:51:18
+//以 HH:mm:ss 格式化:
+System.out.println(DateFormatUtils.ISO_TIME_NO_T_FORMAT.format(new Date()));//12:51:18
+ 
+//自定义日期格式的格式化操作：
+// 以 yyyy-MM-dd HH:mm:ss 格式化Date对象:
+System.out.println(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));//2017-06-17 12:51:18
+//以 yyyy-MM-dd HH:mm:ss 格式化Calendar对象:
+System.out.println(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));//2017-06-17 12:51:18
+//以 yyyy-MM-dd HH:mm:ss 格式化TimeInMillis:
+System.out.println(DateFormatUtils.format(Calendar.getInstance().getTimeInMillis(), "yyyy-MM-dd HH:mm:ss"));//2017-06-17 12:51:18
+BooleanUtils用来操作基础布尔或者布尔对象，很多方法在工作中可以经常使用。
+Commons Validator
+以电子方式或从用户输入接收数据时的常见问题是验证数据的完整性。当需要将不同的验证规则集应用于基于区域设置的同一组数据时，这项工作是重复的，并且变得更加复杂。错误消息也可能因区域设置而异。该软件包解决了其中一些问题，以加快验证规则的开发和维护。
+alidator提供两组不同的功能：
+1.可配置（通常为XML）验证引擎
+2.可重复使用的“原始”验证方法
+您的验证方法将插入引擎并根据您的数据执行。通常，这些方法使用特定于一个应用程序或框架的资源，因此Commons Validator不直接提供可插入的验证器操作。但是，它确实有一组常用的验证方法（电子邮件地址，日期，URL等），有助于创建可插入的操作 commons-validator（通用验证系统）,它使用了一个xml文件来定义针对用户输入的数据验证功能，整个验证体系提供了很强的扩展性，使得开发者可以开发自己的验证函数加入到这个验证体系中来。它对web应用程序提供了客户端javascript验证和服务端验证的两种选择，但是它只是一个验证体系，有些东西还需要自己开发特别是validatoraction的开发。 整个Validator框架可以有若干个FormSet，而每个FormSet又可以有若干个Form，每个Form中可以有若干个Field。FormSet的process(...)方法，逐个调用其中的Form的process(...)方法，而Form的process(...)方法又是逐个调用Field的process(...)方法。Validator类作为验证的起始点，调用与其一一对应的Form的validate(...)方法，而Form的validate(...)方法又是逐个调用其中Field的validate(...)方法实现的。 配置文件说明：
+<form-validation>
+   <global>
+  <constant>
+<constant-name>验证方法的标志名</constant-name>
+<constant-value>正则表达式</constant-value>
+</constant>
+      <validator name="这个验证方法的标志名，供下面的depends调用"
+classname="这个验证方法在哪个类中，为类全名"
+method="验证方法的名称"
+methodParams="这个验证方法需要的参数类型，依次以逗号格开，为类全名"
+depends="基于什么验证之上，可以为多个值，以逗号格开，值为方法的标志名"
+jsFunction="js的方法全名，格式为文件路径.方法名。文件路径以点隔开，如果不填，默认为org.apache.commons.validator.javascript.xxxx"
+msg="对应于properties文件中的一条，作为不通过验证时返回的信息"/>
+</global>
+   <formset language="语言" country="城市" variant="方言？">
+      <constant>
+        <constant-name>验证方法的标志名</constant-name>
+        <constant-value>正则表达式</constant-value>
+      </constant>
+      <form name="bean 对象名称">
+         <field property="bean中的属性名"  depends="需要什么样的验证，可以为多个值，以逗号格开，值为方法的标志名">
+           <arg name = "变量名" key = "properties文件的key，或者来自Var的name" resource = "是/否来自资源文件"/>
+           <var>
+             <var-name>变量名</var-name>
+             <var-value>变量值</var-value>
+           </var>
+         </field>
+      </form>
+   </formset>  
+</form-validation>
+设计模式
+工厂模式
+工厂模式可以分为三类：
+1）简单工厂模式（Simple Factory）
+2）工厂方法模式（Factory Method）
+3）抽象工厂模式（Abstract Factory）
+工厂方法模式与抽象工厂模式的区别：
+工厂方法模式只有一个抽象产品类，而抽象工厂模式有多个。
+工厂方法模式的具体工厂类只能创建一个具体产品类的实例，而抽象工厂模式可以创建多个。
+   使用场景：消费者不关心它所要创建对象的类(产品类)的时候、消费者知道它所要创建对象的类（产品类），但不关心如何创建的时候，等等。
+   模式要素：1. 提供一个产品类的接口。产品类均要实现这个接口(也可以是abstract类，即抽象产品)。
+               2.提供一个工厂类的接口。工厂类均要实现这个接口(即抽象工厂)。
+               3.由工厂实现类创建产品类的实例。工厂实现类应有一个方法，用来实例化产品类。 
+抽象工厂模式的优点
+  抽象工厂模式除了具有工厂方法模式的优点外，最主要的优点就是可以在类的内部对产品族进行约束。所谓的产品族，一般或多或少的都存在一定的关联，抽象工厂模式就可以在类内部对产品族的关联关系进行定义和描述，而不必专门引入一个新的类来进行管理。
+抽象工厂模式的缺点
+   产品族的扩展将是一件十分费力的事情，假如产品族中需要增加一个新的产品，则几乎所有的工厂类都需要进行修改。所以使用抽象工厂模式时，对产品等级结构的划分是非常重要的。
+适用场景:
+   当需要创建的对象是一系列相互关联或相互依赖的产品族时，便可以使用抽象工厂模式。说的更明白一点，就是一个继承体系中，如果存在着多个等级结构（即存在着多个抽象类），并且分属各个等级结构中的实现类之间存在着一定的关联或者约束，就可以使用抽象工厂模式。假如各个等级结构中的实现类之间不存在关联或约束，则使用多个独立的工厂来对产品进行创建，则更合适一点。
+总结
+  无论是简单工厂模式，工厂方法模式，还是抽象工厂模式，他们都属于工厂模式，在形式和特点上也是极为相似的，他们的最终目的都是为了解耦。
+单例模式
+定义：单例模式，是一种常用的软件设计模式。在它的核心结构中只包含一个被称为单例的特殊类。通过单例模式可以保证系统中，应用该模式的类一个类只有一个实例。即一个类只有一个对象实例。
+要点：显然单例模式的要点有三个；一是某个类只能有一个实例；二是它必须自行创建这个实例；三是它必须自行向整个系统提供这个实例。
+主要解决：一个全局使用的类频繁地创建与销毁。
+何时使用：当您想控制实例数目，节省系统资源的时候。
+如何解决：判断系统是否已经有这个单例，如果有则返回，如果没有则创建。
+关键代码：构造函数是私有的。
+优点
+一、实例控制
+单例模式会阻止其他对象实例化其自己的单例对象的副本，从而确保所有对象都访问唯一实例。
+二、灵活性
+因为类控制了实例化过程，所以类可以灵活更改实例化过程。
+缺点
+一、开销
+虽然数量很少，但如果每次对象请求引用时都要检查是否存在类的实例，将仍然需要一些开销。可以通过使用静态初始化解决此问题。
+二、可能的开发混淆
+使用单例对象（尤其在类库中定义的对象）时，开发人员必须记住自己不能使用new关键字实例化对象。因为可能无法访问库源代码，因此应用程序开发人员可能会意外发现自己无法直接实例化此类。
+三、对象生存期
+不能解决删除单个对象的问题。在提供内存管理的语言中（例如基于.NET Framework的语言），只有单例类能够导致实例被取消分配，因为它包含对该实例的私有引用。在某些语言中（如 C++），其他类可以删除对象实例，但这样会导致单例类中出现悬浮引用。
+Springframework基础
+控制反转（Ioc）、依赖注入
+理论背景：为了解决对象之间的耦合度过高的问题，软件专家Michael Mattson提出了IOC理论，用来实现对象之间的“解耦”，目前这个理论已经被成功地应用到实践当中，很多的J2EE项目均采用了IOC框架产品Spring。
+什么是控制反转(Ioc)？
+IOC是Inversion of Control的缩写，即“控制反转”，不是什么技术，而是一种设计思想。在Java开发中，Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。
+loc的作用：Ioc 不是一种技术，只是一种思想，一个重要的面向对象编程的法则，它能指导我们如何设计出松耦合、更优良的程序。传统应用程序都是由我们在类内部主动创建依赖对象，从而导致类与类之间高耦合，难于测试；有了IoC容器后，把创建和查找依赖对象的控制权交给了容器，由容器进行注入组合对象，所以对象与对象之间是 松散耦合，这样也方便测试，利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活。
+	其实Ioc对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在Ioc/DI思想中，应用程序就变成被动的了，被动的等待Ioc容器来创建并注入它所需要的资源了。
+Ioc很好的体现了面向对象设计法则，即由Ioc容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。
+Ioc和DI
+	DI—Dependency Injection，即“依赖注入”：组件之间依赖关系由容器在运行期决定，形象的说，即由容器动态的将某个依赖关系注入到组件之中。依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。
+	理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”： 
+　　 谁依赖于谁：当然是应用程序依赖于Ioc容器；
+　　 为什么需要依赖：应用程序需要Ioc容器来提供对象需要的外部资源；
+　　 谁注入谁：很明显是IoC容器注入应用程序某个对象，应用程序依赖的对象；
+　　 注入了什么：就是注入某个对象所需要的外部资源（包括对象、资源、常量数据）。
+	IoC和DI由什么关系呢？其实它们是同一个概念的不同角度描述，由于控制反转概念比较含糊，所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，“依赖注入”明确描述了“被注入对象依赖IoC容器配置依赖对象”。
+面向切面编程AOP
+定义：AOP为Aspect Oriented Programming的缩写，意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容，是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。
+AOP实现可分为两类（按AOP框架修改源代码的时机）：
+静态AOP实现：AOP框架在编译阶段对程序进行修改，即实现对目标类的增强，生成静态的AOP代理类（生成的*.class文件已经被改掉了，需要使用特定的编辑器）。以AspectJ为代表。
+动态AOP实现：AOP框架在运行阶段动态生成AOP代理（在内存中以JDK动态代理或cglib动态代理生成AOP代理类）。以实现对目标类的增强。以Spring AOP为代表。
+AOP的基本概念：
+AOP框架具有如下两个特征：
+1.个步骤之间的良好隔离性。
+2.源代码无关性。
+关于面向切面编程的一些术语：
+1.切面（Aspect）：切面用于组织多个Advice，Advice放在切面中定义。
+2.连接点（Joinpoint）：程序执行过程中明确的点，如方法的调用，或者异常的抛出。在Spring AOP中，连接点总是方法的调用。
+3.增强处理（Advice）：AOP框架在特定的点执行的增强处理。处理有“before”，“around”，“after”等。
+4.切入点（Pointcut）：可以插入增强处理的连接点。简而言之，当某个连接点满足指定要求时，该连接点将被添加增强处理，该连接点也就变成了切入点。
+5、通知（advice）
+所谓通知指的就是指拦截到连接点之后要执行的代码，通知分为前置、后置、异常、最终、环绕通知五类
+6、目标对象
+代理的目标对象
+7、织入（weave）
+将切面应用到目标对象并导致代理对象创建的过程
+8、引入（introduction）
+在不修改代码的前提下，引入可以在运行期为类动态地添加一些方法或字段
+Spring中的使用
+Spring中AOP代理由Spring的IOC容器负责生成、管理，其依赖关系也由IOC容器负责管理。因此，AOP代理可以直接使用容器中的其它bean实例作为目标，这种关系可由IOC容器的依赖注入提供。
+Spring创建代理的规则为：
+1、默认使用Java动态代理来创建AOP代理，这样就可以为任何接口实例创建代理了
+2、当需要代理的类不是代理接口的时候，Spring会切换为使用CGLIB代理，也可强制使用CGLIB
+应用范围
+很明显，AOP非常适合开发J2EE容器服务器，JBoss 4.0正是使用AOP框架进行开发。
+具体功能如下：
+Authentication 权限
+Caching缓存
+Context passing内容传递
+Error handling 错误处理
+Lazy loading 延时加载
+Debugging 调试
+logging, tracing, profiling and monitoring 记录跟踪 优化 校准
+Performance optimization性能优化
+Persistence 持久化
+Resource pooling资源池
+Synchronization 同步
+Transactions事务
+最常见的一些横切行为如下面这些：
+1.日志记录，跟踪，优化和监控
+2.事务的处理
+3.持久化
+4.性能的优化
+5.资源池，如数据库连接池的管理
+6.系统统一的认证、权限管理等
+7.应用系统的异常捕捉及处理
+8.针对具体行业应用的横切行为
+实现项目
+AOP是一个概念，并没有设定具体语言的实现，它能克服那些只有单继承特性语言的缺点（如Java），AOP具体实现有以下几个项目：
+AspectJ (TM)： 创建于Xerox PARC. 有近十年历史，成熟
+缺点：过于复杂；破坏封装；需要专门的Java编译器。
+动态AOP：使用JDK的动态代理API或字节码Bytecode处理技术。
+基于动态代理API的具体项目有：
+JBoss 4.0 JBoss 4.0服务器
+基于字节码的项目有：
+aspectwerkz ，spring
+序列化
+jdk 原生：ObjectOutputStream
+当创建对象时,程序运行时它就会存在,但是程序停止时,对象也就消失了.但是如果希望对象在程序不运行的情况下仍能存在并保存其信息，将会非常有用，对象将被重建并且拥有与程序上次运行时拥有的信息相同。可以使用对象的序列化。
+ 对象的序列化： 将内存中的对象直接写入到文件设备中
+ 对象的反序列化： 将文件设备中持久化的数据转换为内存对象
+基本的序列化由两个方法产生：一个方法用于序列化对象并将它们写入一个流，另一个方法用于读取流并反序列化对象。
+ObjectOutput
+writeObject(Object obj)
+          将对象写入底层存储或流。
+ObjectInput
+readObject()
+          读取并返回对象。
+ObjectOutputStream的使用步骤:
+1、找到目标文件
+2、建立数据的输出流通道，需要准备一个FileOutputStream流
+3、建立对象的输出流通道 
+4、把对象写出去
+5、关闭资源
+对象输入输出流使用需要注意的细节： 
+1、如果对象需要被写出到文件上，那么对象所属的类必须要实现Serializable接口，Serializable接口没有任何的方法，是一个标志接口。
+2、对象的反序列化和对象的克隆，创建对象的时候，并不会调用构造方法。 
+3、serialVersionUID是用于记录class文件的版本信息的，serialVersionUID这个数字是通过一个类的类名，成员，包名，工程名算出来的一个数字。 
+4、使用ObjectInputStream反序列化的时候，ObjectInputStream会先读取文件中的serialVersionUID与本地的serialVersionUID对比，如果不一致反序列化失败 
+5、如果反序列化的时候可能会修改类的成员，那么最好一开始就给这个类，指定一个serialVersionUID，如果一个类已经指定了serialVersionUID，然后在序列化和反序列化的时候，jvm都不会自己计算这个class的serialVersionUID了。这样就不怕无法序列化和反序列化了。点击累前面的黄色箭头，添加一个serialVersionUID
+6、如果一个对象的某个数据不想序列化到硬盘上，可以使用关键字transient修饰 
+7、如果一个类，维护了另外一个类的引用，另外一个类，也需要实现Serializable接口。如果无法修改这个类的源码，可以给这个类创建一个可序列化的子类。如果这个类是final的也就是不可以继承的。那么就在使用trancint关键字，或者是指定serialVersionUID。
+Xml：JAXB、XStream
+Java Architecture for XML Binding (JAXB) 是一个业界的标准，是一项可以根据XML Schema产生Java类的技术。该过程中，JAXB也提供了将XML实例文档反向生成Java对象树的方法，并能将Java对象树的内容重新写到XML实例文档。从另一方面来讲，JAXB提供了快速而简便的方法将XML模式绑定到Java表示，从而使得Java开发者在Java应用程序中能方便地结合XML数据和处理函数。
+XStream是Java类库，用来将对象序列化成XML （JSON）或反序列化为对象。XStream是自由软件，可以在BSD许可证的许可下分发。
+
+JAXB和XStream比较
+这两东西本质上是有差别的，JAXB称为OX binding工具，XStream应该算序列化工具，但OX binding工具也会marshall和unmarshall，所以包含了序列化这一部分。序列化工具不一定需要提供binding的功能。
+JAXB: 优点
+?	J2EE标准
+?	运行时间比XStream少
+缺点
+?	用起来不方便：需要把手动的把business object转换成schema object，当然也可以直接将schema object作为business object，或者采用反射的方法。
+?	有一定的局限性：需要schema或者annotation
+?	数据量稍大
+XStream优点：
+?	用起来方便
+?	不需要schema，拿过来就转
+?	数据量稍小
+缺点：
+?	非标准
+?	时间性能差
+json：jackson、fastjson
+FastJSON与Jackson比较
+调用方便性而言：
+?	FastJSON提供了大量静态方法，调用简洁方便
+?	Jackson须实例化类，调用相对繁琐，可通过封装成JSON工具类简化调用
+ 
+性能而言：
+?	FastJSON反序列化的性能略差，对于256k的json字符串，平均700ms
+?	Jackson 的 data binding反序列化的性能稍好，对于256k的json字符串，平均600ms
+?	两者的序列化性能基本相同，对于256k的json字符串，平均140ms
+?	相对data binding方式（ObjectMapper.writeValueAsString()），Jackson的流输出方式（JsonGenerator.writeObject()）性能稍好，平均130ms
+spring OXM
+O/X Mapper 是什么？  
+Spring 3.0 的一个新特性是 O/X Mapper。O/X 映射器这个概念并不新鲜，O 代表 Object，X 代表 XML。它的目的是在 Java 对象（几乎总是一个 plain old Java object，或简写为 POJO）和 XML 文档之间来回转换。
+例 如，您可能有一个带有几个属性的简单 bean，且您的业务需要将那个 Java 对象转换为一个 XML 文档。Spring 的 O/X Mapper 能够为您解决那个问题。如果反过来，您需要将一个 XML 文档转换为一个简单 Java bean，Spring 的 O/X Mapper 也能胜任。
+有一点需要注意：Spring O/X Mapper 只是定义由流行的第三方框架实现的统一的界面。要利用 Spring 的 O/X 功能，您需要一个在 Java 对象和 XML 之间来回转换的实用程序。Castor 就是这样一个流行的第三方工具，本文将使用这个工具。其他这样的工具包括 XMLBeans、Java Architecture for XML Binding (JAXB)、JiBX 和 XStream。
+编组和解组
+进行 O/X 映射时，您经常会看到编组（marshalling）和解组（unmarshalling） 这两个术语。
+编组 指将 Java bean 转换成 XML 文档的过程，这意味着 Java bean 的所有字段和字段值都将作为 XML 元素或属性填充到 XML 文件中。有时，编组也称为序列化（serializing）。
+如您所料，解组 是与编组完全相反的过程，即将 XML 文档转换为 Java bean，这意味着 XML 文档的所有元素或属性都作为 Java 字段填充到 Java bean 中。有时，解组也称为反序列化（deserializing）。
+使用 Spring 的 O/X Mapper 的好处
+使 用 Spring 的 O/X Mapper 的一个最直接的好处是可以通过利用 Spring 框架的其他特性简化配置。Spring 的 bean 库支持将实例化的 O/X 编组器注入（即前面提到过的 “依赖项注入”）使用那些编组器的对象。重申一遍，这将加快应用程序开发和部署。
+遵循坚实的面向对象的设计实践，Spring O/X 框架只定义两个接口：Marshaller 和 Unmarshaller，它们用于执行 O/X 功能，这是使用这个框架的另一个重大好处。这些接口的实现完全对独立开发人员开放，开发人员可以轻松切换它们而无需修改代码。例如，如果您一开始使用 Castor 进行 O/X 转换，但后来发现它缺乏您需要的某个功能，这时您可以切换到 XMLBeans 而无需任何代码更改。唯一需要做的就是更改  Spring 配置文件以使用新的 O/X 框架。
+使用 Spring 的 O/X Mapper 的另一个好处是统一的异常层次结构。Spring 框架遵循使用它的数据访问模块建立的模式，方法是将原始异常对象包装到 Spring 自身专为 O/X Mapper 建立的运行时异常中。由于第三方提供商抛出的原始异常被包装到 Spring 运行时异常中，您能够查明出现异常的根本原因。您也不必费心修改代码以捕获异常，因为异常已包装到一个运行时异常中。以下几个运行时异常扩展了基础异常  XMLMappingException：GenericMarshallingFailureException、 ValidationFailureException、MarshallingFailureException 和 UnmarshallingFailureException。
+Springframework高级
+Spring Cache
+缓存是实际工作中非经常常使用的一种提高性能的方法, 我们会在很多场景下来使用缓存。
+Spring 3.1 引入了激动人心的基于凝视（annotation）的缓存（cache）技术，它本质上不是一个具体的缓存实现方案（比如EHCache 或者 OSCache），而是一个对缓存使用的抽象，通过在既有代码中加入少量它定义的各种 annotation，即能够达到缓存方法的返回对象的效果。
+Spring 的缓存技术还具备相当的灵活性。不仅能够使用 SpEL（Spring Expression Language）来定义缓存的 key 和各种 condition，还提供开箱即用的缓存暂时存储方案，也支持和主流的专业缓存比如 EHCache 集成。
+其特点总结例如以下：
+?	通过少量的配置 annotation 凝视就可以使得既有代码支持缓存
+?	支持开箱即用 Out-Of-The-Box，即不用安装和部署额外第三方组件就可以使用缓存
+?	支持 Spring Express Language，能使用对象的不论什么属性或者方法来定义缓存的 key 和 condition
+?	支持 AspectJ，并通过事实上现不论什么方法的缓存支持
+?	支持自己定义 key 和自己定义缓存管理者，具有相当的灵活性和扩展性
+和 spring 的事务管理类似，spring cache 的关键原理就是 spring AOP，通过 spring AOP，其实现了在方法调用前、调用后获取方法的入参和返回值，进而实现了缓存的逻辑。
+Spring Cache redis
+ehcache集群因为节点之间数据同步通过组播的方式，可能带来的问题：节点间大量的数据复制带来额外的开销，在节点多的情况下此问题越发严重，N个节点会出现N-1次网络传输数据进行同步。
+redis主备由于作为中心节点提供缓存，其他节点都向redis中心节点取数据，所以，一次网络传输即可。（当然此处的一次网络代价跟组播的代价是不一样的）但是，随着访问量增大，大量的缓存数据访问使得应用服务器和缓存服务器之间的网络I/O消耗越大。
+两级缓存的思想诞生了，在redis的方案上做一步优化，在缓存到远程redis的同时，缓存一份到本地进程ehcache（此处的ehcache不用做集群，避免组播带来的开销），取缓存的时候会先取本地，没有会向redis请求，这样会减少应用服务器<–>缓存服务器redis之间的网络开销
+Spring MongoDB
+MongoDB是最为流行的开源文档数据库之一。Spring Data MongoDB提供了三种方式在Spring应用中使用MongoDB：
+?	通过注解实现对象-文档映射；
+?	使用MongoTemplate实现基于模板的数据库访问；
+?	自动化的运行时Repository生成功能。
+?	启用MongoDB
+    为了有效的使用Spring Data MongoDB，我们需要在Spring配置中添加几个必要的bean。首先，我们需要配置MongoClient，用它来创建Mongo实例，以便于访问MongoDB数据库。在这里，我们使用Spring Data MongoDB的MongoFactoryBean更加简单。因为它是一个工厂bean，会负责构建Mongo实例，而且不用处理MongoClient构造器所抛出的UnknownHostException异常。同时，我们还需要有一个MongoTemplate bean，实现基于模板的数据库访问。此外，不是必须，但是强烈推荐启用Spring Data MongoDB的自动化Repository生成功能。
+1、pom.xml
+  pom.xml
+2、MongoConfig.java 配置类配置方式
+  MongoConfig.java
+3、applicationContext.xml XML配置方式
+  applicationContext.xml
+?	注解实现对象文档映射
+    Spring Data MongoDB 提供了一套对象-文档 映射的注解。
+@Document - 用于类，以表示这个类需要映射到数据库，您也可以指定映射到数据库的集合名称
+@Id - 用于字段级别，标记这个字段是一个主键，默认生成的名称是“_id”
+@DBRef - 用于字段，以表示它将使用com.mongodb.DBRef进行存储。
+@Indexed - 用于字段，表示该字段需要如何创建索引
+@CompoundIndex - 用于类，以声明复合索引
+@GeoSpatialIndexed - 用于字段，进行地理位置索引
+@TextIndexed - 用于字段，标记该字段要包含在文本索引中
+@Field - 用于字段，并描述字段的名称，因为它将在MongoDB BSON文档中表示，允许名称与该类的字段名不同。
+@Version - 用于字段锁定，保存操作时检查修改。初始值是0，每次更新时自动触发。
+@Language - 用于字段，以设置文本索引的语言覆盖属性。
+@Transient - 默认情况下，所有私有字段都映射到文档，此注解将会去除此字段的映射
+@PersistenceConstructor - 标记一个给定的构造函数，即使是一个protected修饰的，在从数据库实例化对象时使用。构造函数参数通过名称映射到检索的DBObject中的键值。
+  Order.java
+MongoOperations
+我们已经配置好了MongoTemplate，接下来，需要做的就是将其注入到使用它的地方。注意，在这里我们将MongoTemplate注入到一个类型为MongoOperations的属性中。MongoOperations 是 MongoTemplate 所实现的接口，不直接使用具体实现是一个好的习惯。
+   1、 MongoOperations 暴露了多个使用MongoDB文档数据库的方法。这里介绍几个最为常用的操作：
+?	计算集合的数量
+        long order = mongoOperations.getCollection("order").count();
+?	保存文档
+        Order order = new Order();
+        mongoOperations.save(order, "order"); 
+?	根据文档的 _id 查找文档
+        Order byId = mongoOperations.findById("5abb2a6303238760a48e3fd2", Order.class);
+?	得到所有文档
+        List<Order> all = mongoOperations.findAll(Order.class);
+?	删除文档
+        Order order = new Order();
+        order.setId("1");
+        mongoOperations.remove(order);
+MongoOperations 最常见的用法还是接受一个 Query 对象作为参数进行查询、修改、删除的操作。
+数据库
+JDBC （链接、事务、异常处理）
+链接
+JDBC的特性：跨平台，跨数据库
+JDBC中常用的接口和类
+JDBC（Java Database Connectivity）,即 Java 数据库连接。
+JDBC是Oracle公司制定的一套规范（一套接口）。它是一个连接独立数据库的标准Java API， 用于Java编程语言和广泛的数据库之间的连接。其主要作用是建立 Java 程序及数据库的桥梁， 实现 Java 和 数据库数据的传递。
+跨平台
+Java 是跨平台的语言，JDBC 是用 Java 写的，所以 JDBC 也可以跨平台
+跨数据库
+ JDBC是Oracle公司指定的一套规范(一套接口), JDBC 可以连接多种数据库。
+ 驱动: JDBC的实现类.  它由数据库厂商提供.
+我们就可以通过一套规范操作不同的数据库了(多态)
+JDBC中的常用接口和类（API） DriverManager
+  DriverManager:管理了一组JDBC驱动程序的基本服务。它是一个类。
+注册驱动 static void registerDriver(Driver driver) 将类加载到内存中：
+Class.forname("全限定名");//类名+包名 比如MySQL的全限定名是com.mysql.jdbc.Driver
+获取连接
+public static Connection getConnection(String url,
+    String user,
+    String password)
+   参数说明：
+       参数1：告诉我们连接哪个类型的数据库及连接哪个具体的数据库
+          url的组成:    
+    协议：数据库类型：子协议 参数1：
+例如：
+        mysql:  jdbc:mysql://localhost:3306/数据库名称
+         Oracle: jdbc:oracle:thin@localhost:1521@实例
+       参数2：数据库账户名称
+       参数3：数据库账户密码
+Connection Connection :连接 （接口） 常用方法：
+   1）获取语句执行者
+       （了解）Statement createStatement():获取普通的语句执行者，会出现sql注入的问题
+       （必须掌握）PreparedStatement preparedStatement(String sql):预编译的语句执行者
+        CallableStatement prepareCall(String sql) ：创建一个 CallableStatement 对象来调用数据库存储过程。
+      2） void setAutoCommit(false) :手动开启事务
+       commit():提交事务
+         rollback():回滚事务
+Statement
+  Statement: 语句执行者 ，它是一个接口
+  常用方法：
+  （1） ResultSet executeQuery(String sql)
+          执行给定的 SQL 语句，该语句返回单个 ResultSet 对象
+  （2） int executeUpdate(String sql)
+            执行给定 SQL 语句，该语句可能为 INSERT、UPDATE 或 DELETE 语句，或者不返回任何内容的 SQL 语句（如 SQL   DDL 语句）
+  （3） void addBatch(String sql)
+            将给定的 SQL 命令添加到此 Statement 对象的当前命令列表中。
+  （4） int[] executeBatch()
+            将一批命令提交给数据库来执行，如果全部命令执行成功，则返回更新计数组成的数组
+PreparedStatement PreparedStatement:预编译语句执行者，它也是一个接口，它是Statement的子类
+常用方法：
+（1）设置参数（给参数赋值）
+           setXxx(int 第几个问号,Object 实际参数);
+               常用方法： setInt();
+                          setString();
+                          setObject();
+（2）ResultSet executeQuery()
+         在此 PreparedStatement 对象中执行 SQL 查询，并返回该查询生成的 ResultSet 对象。
+（3）  executeUpdate()
+         在此 PreparedStatement 对象中执行 SQL 语句，该语句必须是一个 SQL 数据操作语言（Data Manipulation Language，DML）语句，比如 INSERT、UPDATE 或 DELETE 语句；或者是无返回内容的 SQL 语句，比如 DDL 语句。
+（4） void addBatch(String sql)
+         将给定的 SQL 命令添加到此 Statement 对象的当前命令列表中。
+ResultSet ResultSet :结果集， 接口 执行查询语句后返回的结果 常用方法：
+   boolean next():判断是否有下一条记录，若有返回true且将光标移到下一行，若没有返回false;
+   光标一开始处于第一条记录的上面
+   获取具体内容的方法：
+      getXxx(int|String)
+        若参数为int:第几列
+          若参数为String:列名（字段名）
+       例如：获取username的内容可以通过
+             getString(2)
+           或 getString("username")
+       常用的get方法：
+          getInt
+          getString 可以获取字符串类型的值，也可以获取int值
+          getObject 可以获取任意值        
+导入JDBC连接所需的jar包 （连接数据库所需用的类在jar包里）
+      mysql-connector-java-5.1.39-bin.jar     连接MySQL所需的jar包
+      jdbc6.jar     连接Oracle所需的jar包
+关闭连接
+      rs.close();
+      stmt.close();
+      conn.close();
+如何防止SQL注入
+  使用PreparedStatement对SQL语句进行“预编译”
+预编译的优势有哪些？
+   预先进行SQL语句的编译，对于同类SQL多次执行，速度要更快
+   不会出现因“SQL拼接”出现的错误
+   可防止sql的注入问题
+事务
+事务用法 1 强制禁用掉 Java 程序自动提交功能 conn.setAutoCommit(false); 2 当所有代码执行成功时提交 conn.commit(); 3 当程序出问题时回滚 conn.rollback(); 4 设置事务隔离级别 conn.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+备注：参数说明
+(1)  TRANSACTION_READ UNCOMMITED（读取未提交内容）
+在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。
+本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。
+读取未提交的数据，也被称之为脏读（Dirty Read）。
+(2)  TRANSACTION_READ_COMMTIED（读取提交内容）
+这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。
+它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。
+这种隔离级别 也支持所谓的不可重复读（Nonrepeatable Read），
+因为同一事务的其他实例在该实例处理其间可能会有新的commit，
+所以同一select可能返回不同结果。
+(3)  TRANSACTION_REPEATABLE_READ（可重读）
+这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，
+会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）。
+简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，
+当用户再读取该范围的数据行时，会发现有新的“幻影” 行。
+(4) TRANSACTION_SERIALIZABLE（可串行化）
+     这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，
+     从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。
+     在这个级别，可能导致大量的超时现象和锁竞争。
+异常处理
+JDBC 中，和异常相关的两个类是 SQLException 和 SQLWarning。
+1. SQLException 类：用来处理较为严重的异常情况。
+        比如 :  ① 传输的 SQL 语句语法的错误；
+                   ② JDBC 程序连接断开；
+                   ③ SQL 语句中使用了错误的函数。
+        SQLException 提供以下方法：
+                getNextException() —— 用来返回异常栈中的下一个相关异常；
+                getErrorCode() —— 用来返回代表异常的整数代码 (error code）；
+                getMessage() —— 用来返回异常的描述信息 (error message)。
+2. SQLWarning 类：用来处理不太严重的异常情况，也就是一些警告性的异常。其提供的方法和使用与                                       SQLException 基本相似。
+                结合异常的两种处理方式，明确何时采用哪种:
+                        A. throws 处理不了，或者要让调用者知道，就 throws;
+                        B. try … catch 能自行处理，就进行异常处理。
+3.常见异常
+        1.ClassNotFoundException:
+                  No  Suitable Driver Found.....
+                原因：没有导入第三方jar包
+        2.invalid username/password
+               无效的用户名/密码
+       3. IO 错误: 
+           The Network Adapter could not establish the connection
+             原因:  数据库的两个服务有可能没有开启
+      4. 标识符无效：
+            原因：有可能是写错了sql中的字段名
+      5. 无效字符：
+            原因：有可能在结尾处添加了分号    
+      6. 没有足够的值/或过多的值。
+             插入的值的个数与字段的个数不匹配
+数据源 连接池 （自行实现、Druid）
+数据源
+数据源技术是Java操作数据库的一个很关键技术，流行的持久化框架都离不开数据源的应用。
+数据源提供了一种简单获取数据库连接的方式，并能在内部通过一个池的机制来复用数据库连接，这样就大大减少创建数据库连接的次数，提高了系统性能。
+对于数据源的应用，一般都选择实用开源的数据源或数据库连接池来使用，比如，常见的有DBCP、C3P0、Proxool等等。
+常用连接池DBCP和C3P0
+    Java为数据库连接池提供了公共的接口：javax.sql.DataSource，各个厂商需要让自己的连接池实现这个接口。这样应用程序可以方便的切换不同厂商的连接池！
+    常见的连接池：DBCP、C3P0。
+    dbcp与c3p0区别：
+    dbcp没有自动回收空闲连接的功能
+    c3p0有自动回收空闲连接功能
+连接池的常设属性
+    必须项     driverClassName     数据库驱动名称
+             url     数据库的地址
+             username    用户名
+             password    密码
+    基本项     maxActive     最大连接数量
+                  initialSize     连接池中初始化多少个Connection连接对象
+    扩展项     maxWait    超时等待时间以毫秒为单位 1000等于1秒
+    C3P0连接池的常设属性:
+    除必须项外，还有下面的常设属性
+    1、initialPoolSize  设置初始化连接数
+    2 、maxPoolSize  连接池的最大连接数  
+    3 、minPoolSize   连接池的最小连接数
+DBCP的两种配置方式 硬编码setter方式
+   Setter方式：
+   //创建数据库连接池
+   BasicDataSource bds = new BasicDataSource();
+   //对连接池进行基本配置
+   bds.setDriverClassName(DRIVER);//这是要连接的数据库的驱动
+   bds.setUrl(URL);//指定要连接的数据库地址
+   bds.setUsername(USERNAME);//指定要连接数据库的用户名
+   bds.setPassword(PASSWORD);//指定要连接数据库的密码
+使用配置文件dbcp.properties
+   1. 类路径下提供一个dbcp.properties文件
+   编写配置文件，文件的命名必须是dbcp.properties，里面配置项的格式为：
+   driverClassName = com.mysql.jdbc.Driver
+   url = jdbc:mysql://localhost:3306/test
+   username =root
+   password =root
+   2、编码
+   Properties prop = new Properties();
+   prop.load(new FileInputStream("src/dbcp.properties"));
+   DataSource ds = new BasicDataSourceFactory().createDataSource(prop);
+   Connection conn = ds.getConnection();
+   System.out.println(conn);
+C3P0的三种配置方式 硬编码setter方式
+   1.setters一个个地设置各个配置项
+   这种方式最繁琐，形式一般是这样：
+   ComboPooledDataSource cpds = new ComboPooledDataSource();
+   cpds.setDriverClass(“oracle.jdbc.OracleDriver”);
+   cpds.setJdbcUrl(“jdbc:oracle:thin:@localhost:1521:orcl”);
+   cpds.setUser("scott");
+   cpds.setPassword("oracle");
+   因为繁琐，所以很不适合采用，于是文档提供了另外两种方式。
+使用配置文件c3p0.properties
+   2. 类路径src下提供一个c3p0.properties文件
+   文件的命名必须是c3p0.properties，里面配置项的格式为：
+    c3p0.driverClass=com.mysql.jdbc.Driver
+    c3p0.jdbcUrl=jdbc:mysql://localhost:3306/test
+    c3p0.user=root
+   c3p0.password=root
+   上面只提供了最基本的配置项，其他配置项参照 文档配置，记得是c3p0.后面加属性名就是了，最后初始化数据源的方式就是这样简单：
+    private static ComboPooledDataSource ds = new ComboPooledDataSource();                  
+    public static Connection getConnection() {
+       try {
+            return ds.getConnection();
+         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+使用配置文件c3p0-config.xml
+连接池
+数据库连接池
+数据库连接（Connection）频繁的打开关闭相当耗费资源。 为解决这个问题，数据库连接池的原理是系统开启时主动建立足够数额的连接， 并且将这些连接组成连接池，每次数据库使用连接的时候从连接池中取出， 用完之后再归还给连接池。 连接池的作用
+通过连接池（数据源）可以优化JDBC的操作。 使用JDBC的时候，每操作一次都需要获取连接（创建）用完之后把连接释放掉了（销毁）， 通过连接池来优化CURD操作。 连接池用来管理数据库的连接。 作用： 提高项目的性能。 就是在连接池初始化时存入一定数量的连接，用的时候通过方法获取， 不用的时候归还连接即可。
+用池来管理Connection，这样可以重复使用Connection。有了池， 所以我们就不用自己来创建Connection，而是通过池来获取Connection对象。 当使用完Connection后，调用Connection的close()方法也不会真的关闭Connection， 而是把Connection“归还”给池。池就可以再利用这个Connection对象了。
+所有连接池必须实现一个接口：javax.sql.DataSource接口 获取连接方法： Connection getConnection() 归还连接方法就是以前释放资源的方法，调用connection.close()
+自定义简易连接池
+   所有连接池必须实现一个接口：javax.sql.DataSource接口
+   获取连接方法：   Connection getConnection()
+   归还连接方法就是以前释放资源的方法，调用connection.close()
+

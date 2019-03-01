@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        function Animal(name){
+            this.name = name;
+            this.say = function(){
+                alert(this.name+"在说话");
+            }
+        }
+        var  Animal = new Animal("Jerry");
+        Animal.say();//jerry在说话，因为此时say方法中的this指的是Animal对象
+        var name = "Tom";//相当于widow对象中有一个name对象
+        //Animal.say.call(window);//
+        function Gat(name) {
+            this.name = name;
+        }
+        //和widow对象一样，虽然cat对象中并没有say方法，但它可以作为调用者
+        //去调用Animal.say方法，并且在say方法中使用自己的name属性
+        var cat =new Gat("kitty");
+        Animal.say.call(cat);//Kitty在说话
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+<!--src的路径此处是相对路径，相对当前页面所在路径，在当前页面路径下找img目录-->
+<img src="img/太原工业学院.jpg" alt="英才汇硕" width="51px">
+    <form action="3.manager.html">
+        <fieldset>
+            <legend>注册信息</legend>
+            <table>
+                <tr>
+                    <td>用户名：</td>
+                    <td>
+                        <input type="text" name="username" placeholder="4-8个英文和数字">
+                    </td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td>
+                        <input type="password" name="password" placeholder="4-8个英文和数字">
+                    </td>
+                </tr>
+                <tr>
+                    <td>性别：</td>
+                    <td>
+                        <!--radio 的名称必须一样，这样才能有互斥的效果，即单选的效果
+                        checked属性是默认选中的状态-->
+                        <input type="radio" name="radio"value="0" checked>男
+                        <input type="radio" name="radio"value="1" checked>女
+                    </td>
+                </tr>
+                <tr>
+                    <td>爱好：</td>
+                    <td>
+                        <!--组复选框要一样-->
+                        <input type="checkbox" name="interest"value="sing" >唱歌
+                        <input type="checkbox" name="interest"value="dance" >跳舞
+                        <input type="checkbox" name="interest"value="read" >阅读
+                    </td>
+                </tr>
+                <tr>
+                    <td>生日：</td>
+                    <td>
+                        <input type="date" name="birhtday" >
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>班级：</td>
+                    <td>
+                        <!--option选项中value是选项对应的值，中间的文字是选项的显示信息，只是给客户看，value值才是后台程序需要的信息-->
+                        <select name="class" >
+                            <option value="">-请选择-</option>
+                            <option value="1008">java1008班</option>
+                            <option value="1009">java1009班</option>
+                            <option value="1010">java1010班</option>
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>头像:</td>
+                    <td>
+                        <input type="file" name="header">
+                    </td>
+                </tr>
+                <tr>
+                    <td>备注：</td>
+                    <td>
+                        <textarea name="memo" rows="5" cols="80"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <!--<td><input type="submit"> </td>-->
+                    <td>
+                    <!--<a href="3.manager.html">提交</a>-->
+                        <button><a href="3.manager.html">提交</a></button>
+                    </td>
+                    <td><input type="reset"> </td>
+                </tr>
+
+            </table>
+        </fieldset>
+    </form>
+
+
+</body>
+</html>

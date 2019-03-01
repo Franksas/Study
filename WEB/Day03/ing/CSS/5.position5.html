@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #out{
+            width: 500px;
+            height: 500px;
+            border: 3px dotted red;
+            position: relative;
+            top: 200px;
+            left: 300px;
+        }
+        div{
+            width: 200px;
+            height: 200px;
+
+        }
+        #div1{
+            background-color: red;
+            position: fixed;
+            top: 50px;
+            left: 50px;
+            /*div1固定定位，固定定位的特点：不以父容器的左上角位置来定位，而是始终以浏览器的左上角来定位，同时它和绝对定位一样，会释放空间*/
+        }
+        #div2{
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+<div id="out">
+    <div id="div1"></div>
+    <div id="div2"></div>
+</div>
+
+</body>
+</html>

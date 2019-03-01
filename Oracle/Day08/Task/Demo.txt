@@ -1,0 +1,32 @@
+--任务1：如果有员工信息被修改，要将该员工的原始信息插入到新建的备份表中。
+SELECT * FROM t_emp2;
+CREATE TABLE t_emp1 AS SELECT * FROM emp;
+CREATE TABLE t_emp2 AS SELECT * FROM emp WHERE 1= 2;
+CREATE OR REPLACE TRIGGER t_emp1_trigger
+BEFORE UPDATE ON t_emp1
+FOR EACH ROW
+  BEGIN
+INSERT INTO t_emp2 VALUES(:old.empno,:old.ename,:old.job,:old.mgr,:old.hiredate,:old.sal,:old.comm,:old.deptno);
+END;
+
+UPDATE t_emp1 SET ename = 'TOM' WHERE empno = 7369;
+--任务2：公司有人辞职时，将该员工个人信息移动到历史记录表中
+SELECT * FROM t_emp2;
+CREATE TABLE t_emp2 AS SELECT * FROM emp WHERE 1= 2;
+CREATE OR REPLACE TRIGGER t_emp2_trigger
+BEFORE INSERT ON t_emp2
+FOR EACH ROW
+  BEGIN
+     dbms_output.put_line(:new.ename);
+  END;
+   INSERT INTO t_emp2(empno,ename,deptno) VALUES(987,'ff',30);
+--任务3：如果员工表中的员工工资及奖金都发生改变，要在建立的表里备份原来的工资、奖金和保存修改后的工资、奖金
+CREATE TABLE t_emp1 AS SELECT * FROM emp;
+CREATE OR REPLACE TRIGGER t_emp3_trigger
+BEFORE UPDATE ON t_emp1
+FOR EACH ROW
+  BEGIN
+     dbms_output.put_line(:old.sal);
+     dbms_output.put_line(:old.comm);
+  END;
+  UPDATE t_emp1 SET sal=1200.00,comm=1400.00 WHERE empno=7654;

@@ -1,0 +1,178 @@
+--任务1：打印九九乘法口诀表
+DECLARE
+v_sum NUMBER(7) := 0;
+  v_num NUMBER(4) := 1;
+  v_num2 NUMBER(4) := 1;
+BEGIN
+  FOR v_num IN 1..9 LOOP
+    FOR v_num2 IN 1..v_num LOOP
+    v_sum := v_num * v_num2;
+    dbms_output.put(v_num||' * '||v_num2||'='||v_sum||'  ');
+    END LOOP;
+    dbms_output.put_line(' ');
+  END LOOP;
+END;
+--任务2：向测试表t_test循环插入100条数据。
+DECLARE
+  v_num NUMBER(4) := 1;
+BEGIN
+  FOR v_num IN 1..100 LOOP
+    INSERT INTO t_test VALUES(v_num,'ab','n','12345678998');
+  END LOOP;
+END;
+SELECT  * FROM t_test;
+
+
+
+
+--任务一：求1！+2！+3！+4！+5！
+
+DECLARE
+v_sum NUMBER(7) := 0;
+  v_num1 NUMBER(4) := 1;
+  v_num2 NUMBER(4) := 1;
+  v_num3 NUMBER(4) :=1;
+BEGIN
+  FOR v_num1 IN 1..5 LOOP
+    FOR v_num2 IN 1..v_num1 LOOP
+    v_num3:= v_num3*v_num2;
+    END LOOP;
+    v_sum:= v_sum+v_num3;
+      v_num3:=1;
+  END LOOP;
+  dbms_output.put_line('结果='||v_sum);
+END;
+任务二：找出1-300之间的所有奇数
+DECLARE
+  v_num1 NUMBER(4):=1;
+  v_num2 NUMBER(4) := 2;
+BEGIN
+  FOR v_num1 IN 1..300 LOOP
+    IF MOD(v_num1,v_num2)!=0 THEN
+    dbms_output.put_line('奇数是：'||v_num1);
+    END IF;
+  END LOOP;
+END;
+任务三：输出100-1000之间的水仙花数
+DECLARE
+  v_num1 NUMBER(4);
+  v_num2 NUMBER(4);
+  v_num3 NUMBER(4);
+  v_num4 NUMBER(4);
+BEGIN
+  FOR v_num1 IN 100..999 LOOP
+     v_num2 :=TRUNC(v_num1/100);
+  v_num3 :=TRUNC(MOD(v_num1,100)/10);
+  v_num4 :=MOD(MOD(v_num1,100),10);
+    IF v_num2*v_num2*v_num2+v_num3*v_num3*v_num3+v_num4*v_num4*v_num4=v_num1 THEN
+    dbms_output.put_line('水仙花数是：'||v_num1);
+    END IF;
+  END LOOP;
+END;
+任务四： 给出学生成绩判断学生成绩是等级，
+成绩在85分以上是“优秀”，70~85分之间是“中等”，60~70分之间是“及格”，60分以下不及格。
+DECLARE
+v_grade NUMBER(3):=&grade;
+BEGIN
+  IF v_grade<60 THEN
+    dbms_output.put_line('不及格');
+    ELSIF 60 <=v_grade AND v_grade < 70 THEN
+    dbms_output.put_line('及格');
+    ELSIF 70 <=v_grade AND v_grade < 85 THEN
+    dbms_output.put_line('中等');
+    ELSE
+     dbms_output.put_line('优秀');
+END IF;
+END;
+任务五；从键盘输入一个数，判断是不是素数。
+DECLARE
+  t_number NUMBER(10):=&number;
+  t_num1 NUMBER(10):=2;
+BEGIN
+  LOOP
+  IF MOD(t_number,t_num1) <> 0 THEN
+    t_num1:=t_num1+1;
+  ELSE
+    EXIT;
+  END IF;
+  END LOOP;
+  IF t_num1 <>1 AND t_num1 <> t_number THEN
+
+    dbms_output.put_line(t_number||'是素数');
+    ELSE
+      dbms_output.put_line(t_number||'不是素数');
+    END IF;
+END;
+
+任务六：编写一个PL/SQL程序删除t_test中的第19条记录信息
+DECLARE
+   v_num t_test.tid%type;
+BEGIN
+   SELECT tid INTO v_num
+   FROM t_test
+   WHERE tid =19;
+   DELETE FROM t_test WHERE v_num =19;
+END;
+任务七：编写一个PL/SQL程序查询选修了'Oralce'课程的学生的平均成绩，在控制台输出。
+SELECT * from t_scgrade;
+DECLARE
+  v_grade t_scgrade.grade%type;
+BEGIN
+   SELECT avg(grade) INTO v_grade FROM t_scgrade WHERE cno = 'Oralce';
+   dbms_output.put_line('平均成绩为：'||v_grade);
+END;
+
+任务八：创建一张“账户表”，有用户名称， 账号，余额等字段。
+完成“622605318909”账户向“622643928901”账户转账500元的业务，成功提示“转账成功”。
+CREATE TABLE t_account(
+       name VARCHAR(10),
+       numb number(15),
+       balance NUMBER(10)
+
+);
+SELECT * FROM T_ACCOUNT;
+INSERT INTO t_account VALUES('王三',622605318909,4000);
+INSERT INTO t_account VALUES('王五',622643928901,100);
+DECLARE
+  t_money NUMBER(4):=500;
+  t_num1 NUMBER(18):=622605318909;
+  t_num2 NUMBER(19):=622643928901;
+BEGIN
+
+  UPDATE t_account SET balance = balance-t_money WHERE numb = t_num1;
+  UPDATE t_account SET balance = balance+t_money WHERE numb = t_num2;
+  dbms_output.put_line('转账成功');
+END;
+任务九
+    1、创建一个“班级表”t_class2，有班级id（c_id）,班级名称（c_name）,班主任（c_teacher）
+	  2、给表中录入多条数据创建一班级类型的变量
+     3、把班级id为2的记录放到该变量中 ，在控制台上输出
+CREATE TABLE t_class5(
+       c_id VARCHAR2(32) PRIMARY KEY,
+       c_name VARCHAR2(20),
+       c_teacher VARCHAR2(20)
+);
+DECLARE
+  v_num NUMBER(20);
+  v_class5 t_class5%ROWTYPE;
+BEGIN
+  FOR v_num IN 1 .. 20
+    LOOP
+      INSERT INTO t_class5 VALUES(v_num,v_num||'班',v_num||'班老师');
+    END LOOP;
+  SELECT * INTO v_class5
+  FROM t_class5
+  WHERE c_id = 2;
+  dbms_output.put_line(v_class5.c_id||CHR(10)||v_class5.c_name||CHR(10)||v_class5.c_teacher);
+END;
+
+任务十：编写一个PL/SQL块 查询雇员编号为100的员工姓名，工资，职位ID,入职时间
+DECLARE
+  v_emp5 emp%ROWTYPE;
+BEGIN
+SELECT * INTO v_emp5
+FROM emp
+WHERE empno=7369;
+dbms_output.put_line(v_emp5.ename||CHR(10)||v_emp5.sal||CHR(10)||v_emp5.hiredate||CHR(10)||v_emp5.job);
+END;
+select * from v_emp;

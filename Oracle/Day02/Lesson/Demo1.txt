@@ -1,0 +1,86 @@
+- 数据字典表
+SELECT * FROM dba_users WHERE username = 'myuser1' ;
+SELECT * FROM dba_tablespaces;
+SELECT * FROM dba_tables WHERE table_name = 'test1' ;
+SELECT * FROM v$database;
+SELECT * FROM v$datafile;
+--新建表空间
+CREATE TABLESPACE test1 DATAFILE
+'E:\app\asus\oradata\orcl\test1.dbf'
+SIZE 30M AUTOEXTEND ON NEXT 5M MAXSIZE 500M;
+--创建用户
+CREATE USER myuser2 IDENTIFIED BY myuser2 DEFAULT TABLESPACE test1;
+-- 给用户授权 GRANT...TO
+--收回权限 REVOKE...FROM
+GRANT CREATE SESSION TO myuser1;
+REVOKE CREATE SESSION FROM myuser1;
+GRANT RESOURCE,DBA,CONNECT TO myuser1;
+REVOKE RESOURCE,DBA,CONNECT  FROM myuser1;
+--删除用户 DROOP USER 用户名 CASCADE;
+DROP USER myuser1 CASCADE;
+--删除表空间
+DROP TABLESPACE test2 INCLUDING CONTENTS AND DATAFILES;
+
+
+--创建学生表（学号，姓名。性别，年龄，电话号码，电子邮箱，班号）
+CREATE TABLE t_stu(
+       sno VARCHAR2(32),
+       sname VARCHAR2(20),
+       sex CHAR(2),
+       age NUMBER(3),
+       telephone NUMBER(11),
+       email VARCHAR2(20),
+       cno VARCHAR2(32)
+）;
+--约束
+drop
+-- 主表
+ CREATE TABLE t_class1(
+       sno VARCHAR2(32) ,
+       sname VARCHAR2(20),
+       cno VARCHAR2(32) PRIMARY KEY
+
+）;
+--第一种方式
+ CREATE TABLE t_student(
+       sno VARCHAR2(32) PRIMARY KEY,
+       sname VARCHAR2(20) NOT NULL,
+       sex CHAR(2) CHECK(sex IN('男','女')),
+       age NUMBER(3),
+       telephone NUMBER(11) CHECK(length(telephone)<=11),
+       email VARCHAR2(20) UNIQUE,
+       cno VARCHAR2(32) REFERENCES t_class(cno)
+);
+--插入一行数据
+INSERT INTO t_stu VALUES('1','aaa','男','13','12345678901','11@qq.com','aa')
+INSERT INTO t_stu VALUES('2','aaa','男','13','12345678901')
+SELERT * FROM t_stu;
+--第二种方式
+ CREATE TABLE t_student2(
+       sno VARCHAR2(32),
+       sname VARCHAR2(20),
+       sex CHAR(2),
+       age NUMBER(3),
+       telephone NUMBER(11),
+       email VARCHAR2(20),
+       cno VARCHAR2(32),
+       CONSTRAINT pk_stu2_sno3 PRIMARY KEY(sno),
+       CONSTRAINT pk_stu2_phone CHECK(length(telephone)<=11),
+       CONSTRAINT pk_stu2_email UNIQUE(email),
+       CONSTRAINT pk_stu2_cno FOREIGN KEY(cno) REFERENCES t_class1(cno)
+
+);
+-- 增加约束
+ALTER TABLE t_student3 ADD CONSTRAINT pk_stu3_sno PRIMARY KEY(sno);
+--增加非空约束
+ALTER TABLE t_student3 MODIFY(sname NOT NULL);
+ALTER TABLE t_student3 ADD CONSTRAINT pk_stu3_cno FORIGN KEY(sno) REFERENCES t_class1(cno);
+--查看末个用户建立的约束
+SELECT * FROM user_constraints
+WHERE table_name=' T_stuDent3';
+
+--删除约束
+
+ALTER TABLE t_student3 DROP CONSTRAINT FK STU3 CNO;
+-- 删除表
+INSERT INTO t_class VALUES('1','1班');

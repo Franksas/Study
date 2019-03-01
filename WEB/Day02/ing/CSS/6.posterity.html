@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--charset是编码，页面编码格式，并且告知浏览器用此编码解析-->
+    <meta charset="UTF-8">
+    <title>后代选择器</title>
+    <style type="text/css">
+        body div{
+            /*body的后代，即body元素中嵌套的元素都是body的后代，所有body的后代是div 都使用以下样式*/
+            color:red;
+            font-size:30px;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li>Appole</li>
+        <li>Orange</li>
+        <li>Bnaana</li>
+    </ul>
+    <div>
+        以下是唐诗和宋词
+        <div>
+            以下是唐诗
+            <div>
+                <h3>春夜喜雨</h3>
+                <pre>
+                    好雨知时节，当春乃发生。
+                    随风潜入夜，润物细无声。
+                </pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

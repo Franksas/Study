@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<!-- 自定义列表，跟ul,ol类似-->
+<dl>
+    <!-- 自定义列表的标题-->
+    <dt>以下是唐朝诗人</dt>
+    <!-- dd是列表项-->
+    <dd>李白</dd>
+    <dd>杜甫</dd>
+    <dd>李商隐</dd>
+    <dd class="lastDD">杜牧</dd>
+    <dd id="lastDD">杜秋娘</dd>
+    </dl>>
+    <script type="text/javascript">
+        var lastDD = document.getElementById("lastDD");
+        //        在js中改变元素的样式，通过style属性和相应的属性和值来决定
+        lastDD.style.backgroundColor="red";
+
+        var dds = document.getElementsByTagName("dd");
+        dds[dds.length-1].style.backgroundColor="yellow";
+
+        var dds = document.getElementsByClassName("lastDD");
+        dds[dds.length-1].style.backgroundColor="green";
+
+        var lastDD = document.getElementsByTagName("id")[0].lastChild;
+        var children = document.getElementsByTagName("id")[0].childNodes;
+        alert(children.length);
+        for(var i=0;i<children.length;i++){
+//            innerHTML是获取元素的内容，这种只用于块状的元素，如：div,span,td,p
+            //如果元素有value属性的，如input应该用value来获取元素内容
+            alert(children[i].innerHTML);
+        }
+        //用的是关系获取元素，就是根据当前元素和要获取元素的关系来获取（关系为：lastElementChild来获取）
+        document.getElementsByTagName("dl")[0].lastElementChild.style.backgroundColor="red";
+        document.getElementsByTagName("dl")[0].lastElementChild.previousElementSibling.style.backgroundColor="blue";
+        document.getElementsByTagName("dl")[0].lastElementChild.previousElementSibling.previousElementSibling.style.backgroundColor="green";
+    </script>
+</body>
+</html>

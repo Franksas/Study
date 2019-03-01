@@ -1,0 +1,75 @@
+--任务一
+SELECT ename,sal,deptno
+FROM emp
+WHERE ename like '_A%';
+-- 任务二
+SELECT empno,ename,sal,deptno
+FROM emp
+WHERE comm IS NOT NULL AND comm!0;
+--任务三：查询
+SELECT ename,deptno
+FROM emp
+WHERE deptno IN(20,30);
+--任务四
+SELECT ename,sal
+FROM emp
+WHERE sal NOT BETWEEN 2000 AND 3000;
+
+
+--任务1、 查询出员工的姓名，职位，入职时间和部门号，按着入职时间升序排序和部门号排序降序排序。
+SELECT ename,job,hiredate,deptno
+FROM emp
+ORDER BY hiredate ASC,deptno DESC;
+--任务2 、查询出员工的姓名，年收入（起别名annualIncome），部门号，按着annualIncome 降序排序，部门也降序排序。
+SELECT ename,sal *12+NVL(comm,0) as annualIncome,deptno
+FROM emp
+ORDER BY annualIncome DESC, deptno DESC;
+--任务3、查询出20号部门工资大于1200的员工的姓名，年薪，部门号，并按照年薪降序排序。
+SELECT ename,sal *12 ysal,deptno
+FROM emp
+WHERE sal>1200 AND deptno =20
+ORDER BY ysal DESC;
+
+-- 任务1 、统计10，20, 30 号部门的员工人数。
+SELECT deptno,count(*)
+FROM emp
+GROUP BY deptno;
+
+-- 任务2、统计各个职位的员工人数和平均工资。
+SELECT job,count(*),avg(sal)
+FROM emp
+GROUP BY job;
+
+--任务3、查询各个部门各个岗位的平均工资。
+SELECT avg(sal)
+FROM emp
+GROUP BY deptno,job;
+-- 任务4、统计员工表中有奖金（包括奖金不能为0）的员工人数
+SELECT comm,count(*)
+FROM emp
+GROUP BY comm
+HAVING comm>0;
+--任务5、统计员工表所有员工的人数
+SELECT count(*)
+FROM emp
+-- 任务6、统计职位的个数
+SELECT count(job)
+FROM emp
+GROUP BY job;
+-- 任务1、列出最低薪金大于1500的各种工作及从事此工作的全部雇员人数
+SELECT job,count(*)
+FROM emp
+GROUP BY job
+HAVING min(sal)>1500;
+-- 任务2、列出最高薪水小于3500的各个部门人数。
+SELECT job,count(*)
+FROM emp
+GROUP BY job
+HAVING max(sal)<3500;
+
+--任务一将姓名全部转换成小写的形式显示
+SELECT LOWER(ename) FROM emp;
+--任务二查询姓名加起来的长度小于11位的记录
+SELECT employee_id,first_name||last_name
+FROM employees
+WHERE LENGTH(first_name||last_name) < 11;

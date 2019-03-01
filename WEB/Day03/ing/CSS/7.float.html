@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        ul{
+            list-style-type: none;/*去掉li左边的小图标*/
+            background-color:black;
+            height: 40px;
+        }
+        li{
+            float: left;/*类似于从左边来的风，把元素吹向右边，并且贴在上面*/
+            /*width: 30px;/!*适用于文字长度相同的情况*!/*/
+            margin-left: 20px;/*可以保证li的外边距相同*/
+            /*border: 1px solid yellowgreen;*/
+            /*让文字垂直居中：1.设置li的高度和ul高度一致；2.设置li的行高和高度一致*/
+            height: 40px;
+            line-height: 40px;
+            /*margin-top: 5px;*/
+
+
+        }
+        a{
+            text-decoration: none;
+            color: white;
+        }
+        a:link{
+            text-decoration: none;
+
+        }
+        li:hover{
+            /*text-decoration: underline;*/
+            color: orange;/*字体变色*/
+            font-size: 20px;/*字体变大*/
+            font-weight: bold;/*字体变粗*/
+            border-bottom: 2px solid green;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 浮动就，一般用在布局和导航栏，以为块状元素默认是占一行，并且有换行的功能布局时，往往需要一行上放N个块状元素，所以要用浮动去掉换行的特性-->
+    <ul>
+        <li><a href="">首页</a></li>
+        <li><a href="">学校管理</a></li>
+        <li><a href="">院系管理</a></li>
+        <li><a href="">班级管理</a></li>
+        <li><a href="">学生管理</a></li>
+        <li><a href="">用户管理</a></li>
+    </ul>
+</body>
+</html>

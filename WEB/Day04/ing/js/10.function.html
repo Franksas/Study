@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+        <script type="text/javascript">
+            //定义一个函数，返回两个数相加的和
+            function sum(num1,num2){
+                return num1+num2;
+            }
+            var s= sum(1,2);
+            alert("s:"+ s);
+            //定义匿名的函数，把函数赋值给变量
+            //此时f相当于一个函数的引用
+            var f = function(name){
+                alert("hello"+name);
+            }
+            f("Tom");//hello Tom
+        </script>
+</head>
+<body>
+
+</body>
+</html>

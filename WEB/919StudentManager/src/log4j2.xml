@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- status是log4j框架自身的日志输出级别 -->
+<!-- monitorInterval系统自动检测当前配置文件的变化，自动失效，不用重启系统 -->
+<Configuration status="warn" name="MyApp" monitorInterval="100">
+<!--日志输出地  -->
+    <appenders>
+    <!-- 控制台 -->
+        <Console name="Console" target="SYSTEM_OUT">   
+        <!--只要是等于或高于debug级别的日志都输出 --> 
+            <ThresholdFilter level="debug"/>    
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss:SSS} %-51evel %class{36} %l %M - %msg%n"/>    
+        </Console>
+        <!-- 文件 -->    
+        <File name="log" fileName="e:\\test1.log" append="true">
+        <!-- 只有等于或高于error级别的日志才输出 -->
+            <ThresholdFilter level="error"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss:SSS} %-51evel %class{36} %l %M - %msg%n"/>    
+        </File>  
+    </appenders>
+
+    <loggers>
+    <!--总的级别是debug  -->
+        <root level="debug">
+        <!-- 引用以上的定义的目的输出地 -->
+            <appender-ref ref="Console"></appender-ref>
+            <appender-ref ref="log"></appender-ref>
+        </root>
+    </loggers>
+</Configuration>

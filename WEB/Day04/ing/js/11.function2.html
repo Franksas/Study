@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+        //定义一个Person类
+        function Person(name,sex,age){
+            this.name =name;//相当于类的属性
+            this.sex = sex;
+            this.age = age;
+            //定义一个Person类的方法，一般用匿名方法来定义
+            this.say=function(){
+                alert("My name is" + name+" age:"+age +"sex:" + sex);
+            }
+        }
+        var Person = new Person("Tom","男",20);
+        Person.say();
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

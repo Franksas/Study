@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="layui/css/layui.css">
+    <script type="text/javascript" src="layui/layui.js"></script>
+    <style type="text/css">
+        .site-title{ margin: 40px 0 10px;}/*30px代表上边距，0代表左右边距，20px代表下边距*/
+        .site-title fieldset{border: none; padding: 0; border-top: 1px solid #eee;}
+        .site-title fieldset legend{margin-left: 20px;  padding: 0 10px; font-size: 22px; font-weight: 300;}
+    </style>
+
+</head>
+<body>
+
+<div class="site-title">
+    <fieldset><legend><a name="use">以下是表单</a></legend></fieldset>
+</div>
+<div class="site-text site-block">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">编号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码：</label>
+            <div class="layui-input-inline">
+                <input type="password" name="password" required lay-verify="required" lay-verType="tips" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">密码不能为空</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">班级：</label>
+            <div class="layui-input-block">
+                <select name="city" lay-verify="required">
+                    <option value=""></option>
+                    <option value="0">Java1007</option>
+                    <option value="1">Java1008</option>
+                    <option value="2">Java1009</option>
+                    <option value="3">Java1010</option>
+                    <option value="4">Java1011</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">爱好：</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="like[sing]" title="唱歌">
+                <input type="checkbox" name="like[dance]" title="跳舞" checked>
+                <input type="checkbox" name="like[play]" title="游戏">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">正式生：</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="switch" lay-skin="switch" lay-text="ON|OFF" lay-filter="switchTest" value="1">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="男" title="男"checked>
+                <input type="radio" name="sex" value="女" title="女" >
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">信息：</label>
+            <div class="layui-input-block">
+                <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="layui-form">
+        <div class="layui-inline">
+            <select name="city" lay-verify="required">
+                <option value="">请选择一个城市</option>
+                <option value="010">北京</option>
+                <option value="021">上海</option>
+                <option value="0571">杭州</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="city" lay-verify="required">
+                <option value="">请选择一个城市</option>
+                <option value="010">北京</option>
+                <option value="021" disabled>上海（禁用效果）</option>
+                <option value="0571" selected>杭州</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="quiz">
+                <option value="">select分组</option>
+                <optgroup label="城市记忆">
+                    <option value="你工作的第一个城市">你工作的第一个城市？</option>
+                </optgroup>
+                <optgroup label="学生时代">
+                    <option value="你的工号">你的工号？</option>
+                    <option value="你最喜欢的老师">你最喜欢的老师？</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="city" lay-verify="required" lay-search>
+                <option value="">带搜索的选择框</option>
+                <option value="1">layer</option>
+                <option value="2">form</option>
+                <option value="3">layim</option>
+                <option value="4">element</option>
+                <option value="5">laytpl</option>
+                <option value="6">upload</option>
+                <option value="7">laydate</option>
+                <option value="8">laypage</option>
+                <option value="9">flow</option>
+                <option value="10">util</option>
+                <option value="11">code</option>
+                <option value="12">tree</option>
+                <option value="13">layedit</option>
+                <option value="14">nav</option>
+                <option value="15">tab</option>
+                <option value="16">table</option>
+                <option value="17">select</option>
+                <option value="18">checkbox</option>
+                <option value="19">switch</option>
+                <option value="20">radio</option>
+            </select>
+
+        </div>
+        <div class="layui-form-item">
+            <lable class="layui-form-label">性别：</lable>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="0" title="男" checked>
+                <input type="radio" name="sex" value="1" title="女"><br>
+            </div>
+            <span class="layui-form-mid " style="color: red"></span>
+        </div>
+    <script type="text/javascript">
+        layui.use(['form'],function(){
+            var form = layui.form;//模块的引用和实例化
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+                layer.msg(JSON.stringify(data.field));
+                return false;
+                form.init();
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

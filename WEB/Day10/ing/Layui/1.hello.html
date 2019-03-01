@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="layui/css/layui.css">
+    <script type="text/javascript " src="layui/layui.all.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        //alert("hello");
+        //引入模块，第一个参数；要引入的模块的数组；第二个参数，加载完成执行的方法
+        layui.use(['layer'],function(){
+            var layer = layui.layer;
+            layer.msg("hello layui");
+        });
+    </script>
+</body>
+</html>

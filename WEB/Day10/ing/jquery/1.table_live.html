@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="jquery-3.3.1.min.js">
+
+    </script>
+</head>
+<body>
+    <div>
+        <label>编号：</label>
+        <input type="text" id="id">
+        <button>增加</button>
+        <button>删除</button>
+    </div>
+<table>
+     <thead>
+         <tr>
+             <td><input type="checkbox" id="allChb"> </td>
+             <th>编号</th>
+         </tr>
+     </thead>
+</table>
+<script type="text/javascript">
+   $("button:first").bind("click",function(){
+       var id = $("#id").val();//获取编号信息
+       //复制一行
+       var tr = $("tr:first").clone();
+       //修改新行的内容
+       tr.children().eq(0).html("<input type ='checkbox' value='+id+'>");
+       tr.children().eq(1).html(id);
+       $("table").append(tr);//把新行加到表格中
+   });
+   //bind只能给页面加载时存在的元素绑定事件，对于新增的元素是无效的
+  /*  $("tr").bind("dblclick",function(){
+        alert(this.rowIndex);
+    });*/
+   //;live是给所有的tr元素绑定事件，不管是原有的，还是新增的
+  // $("tr").live("dblclick",function(){
+   //1,用父选择器；2.用on关键字代表live； 3.在参数中增加一个目标选择器tr
+   //解决live因版本问题不能使用的方法
+   $("table").on("dblclick","tr",function(){
+       //行索引是零的是表头，不参与处理，退出事件
+        if(this.rowIndex==0){
+            return;
+        }
+       alert(this.lastElementChild.innerHTML);
+       // alert(this.rowIndex);
+    });
+</script>
+</body>
+</html>

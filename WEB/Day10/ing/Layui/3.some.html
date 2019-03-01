@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="layui/css/layui.css">
+    <script type="text/javascript" src="layui/layui.js"></script>
+</head>
+<body>
+<div style="margin: 50px 10px;">
+<button>标准按钮</button>
+<button class="layui-btn">提交</button>
+<button class="layui-btn layui-btn-primary">重置</button>
+    <a href="2.hello.all.html" class="layui-btn">2.html_all.html</a>
+    <ul>
+        <li class="layui-btn">娄山关</li>
+        <li class="layui-btn layui-bg-orange">井冈山</li>
+    </ul>
+    <ul>
+        <li>娄山关</li>
+        <li>井冈山</li>
+    </ul>
+    <div class="layui-btn">第一个div</div>
+    <div class="layui-btn">第二个div</div>
+    <button class="layui-btn">增加<i calss="layui-icon layui-btn-parimary"></i></button>
+    <button class="layui-btn layui-disabled">删除</button>
+    <button class="layui-btn layui-btn-radius layui-btn-warm">借阅</button>
+    <button class="layui-btn layui-btn-radius layui-btn-normal">还书</button>
+    <div class="layui-btn-group">
+        <button class="layui-btn">7</button>
+        <button class="layui-btn">8</button>
+        <button class="layui-btn">9</button>
+    </div>
+    <div class="layui-btn-group" >
+        <button class="layui-btn">4</button>
+        <button class="layui-btn">5</button>
+        <button class="layui-btn">6</button>
+    </div>
+</div>
+    <blockquote>
+        这是一个引用
+    </blockquote>
+    <blockquote class="layui-elem-quote">
+        这里也是一个引用，是使用了layui的样式
+    </blockquote>
+    <pre class="layui-code">
+          <blockquote>
+              这是一个引用
+          </blockquote>
+    <blockquote class="layui-elem-quote">
+        这里也是一个引用，是使用了layui的样式
+    </blockquote>
+    </pre>
+    <label>编号：</label>
+    <input type="text" id="id">
+    <button>查看编号</button>
+    <ul>
+        <!--<li class="layui-bg-red layui-anim-rotate layui-anim-loop">红色</li>-->
+        <li class="layui-bg-orange">桔红色</li>
+        <li class="layui-bg-black">黑色</li>
+        <li class="layui-bg-green">绿色</li>
+        <li class="layui-bg-gray">灰色</li>
+        <li class="layui-bg-blue">蓝色</li>
+        <li class="layui-bg-cyan">藏青色</li>
+    </ul>
+    <button class="layui-bg-green">绿色</button>
+    <button class="layui-bg-red">红色</button>
+    <button class="layui-bg-blue">蓝色</button>
+    <div>
+        <i class="layui-icon layui-icon-face-smile"style="font-size: 50px"></i>
+        <i class="layui-icon layui-icon-face-smile-b"style="font-size: 50px;color: red"></i>
+        <i class="layui-icon layui-icon-face-smile-fine"style="font-size: 50px"></i>
+        <i class="layui-icon layui-icon-login-qq"style="font-size: 30px;color: green">qq</i>
+        <i class="layui-icon layui-icon-login-weibo"style="font-size: 30px;color: green">微博</i>
+        <i class="layui-icon layui-icon-picture"style="font-size: 30px;color: green">图片</i>
+    </div>
+
+    <script type="text/javascript">
+        //引用code模块
+        layui.use(['jquery','code'],function(){
+            //定义code对象，此处不可少
+           var code = layui.code();
+            var $ = layer.$;
+            var layer = layui.layer;
+            $("button").first().bind("click",function(){
+               //alert("hello");
+                layer.msg($("#id").val());
+                //obj.val()是获取值的方法，obj.val(值xxx)是赋值的方法
+
+            });
+            for(var i=0;i<100;i++){
+                var str = "<i class='layui-icon layui-icon-snowfalke'></i>";
+                $("div:last").append(str);
+
+            }
+            $("div:last i").each(function(){
+                this.style.display = "black";
+            })
+        });
+    </script>
+</body>
+</html>
