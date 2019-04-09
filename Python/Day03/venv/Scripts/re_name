@@ -1,0 +1,5 @@
+#!H:\Java1008\Java1008\Python\Day03\venv\Scripts\python.exe
+
+from re_name import renamer
+
+renamer.Renamer().update()

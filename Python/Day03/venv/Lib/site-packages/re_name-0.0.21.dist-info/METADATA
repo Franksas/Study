@@ -1,0 +1,34 @@
+Metadata-Version: 2.1
+Name: re-name
+Version: 0.0.21
+Summary: A small example package
+Home-page: https://github.com/geforcesong/re_name
+Author: George Guo
+Author-email: geforcesong@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+
+# Example Package
+
+This is a tool that you can update file names in batch
+
+### ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `re_name [old patten] [new patten]`
+
+#### optional parameters
+
+    -f --file This will make changes on file(s), you can only review the changes without this
+    --ext        Specify the file types you want to update
+    -s --suffix  Will append suffix. # stands for the sequence for file list
+
+#### re_name -p '\-\d' ""
+    hello1-1.txt  ---->  hello1.txt
+
+#### re_name 55 ll -s "#"
+    he55o1.txt  ---->  hello1-1.txt
+    he55o2.txt  ---->  hello2-2.txt
+    he55o3.txt  ---->  hello3-3.txt
+

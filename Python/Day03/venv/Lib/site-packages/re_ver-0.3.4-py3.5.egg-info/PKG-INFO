@@ -1,0 +1,32 @@
+Metadata-Version: 1.2
+Name: re-ver
+Version: 0.3.4
+Summary: Release Versions of Software
+Home-page: https://github.com/scopatz/rever
+Author: Anthony Scopatz
+Author-email: scopatz@gmail.com
+Maintainer: Anthony Scopatz
+License: BSD
+Description: rever
+        =====
+        Release Versions of Software
+        
+        Quick Start
+        ===========
+        To get started with rever, first put a ``rever.xsh`` file in the root directory of your
+        source repository,
+        
+        .. code-block:: xonsh
+        
+            $ACTIVITIES = ['tag']
+            $TAG_PUSH = False
+        
+        Then, run rever from this directory to execute the release actions you specified.
+        
+        .. code-block:: sh
+        
+            $ rever check
+            $ rever 1.42
+        
+Platform: Cross Platform
+Classifier: Programming Language :: Python :: 3

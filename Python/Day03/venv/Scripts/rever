@@ -1,0 +1,3 @@
+#!H:\Java1008\Java1008\Python\Day03\venv\Scripts\python.exe -u
+from rever.main import main
+main()
